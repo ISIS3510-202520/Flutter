@@ -2,13 +2,11 @@ class UserEntity {
   final String id;
   final String name;
   final String email;
-  final bool isActive;
 
   UserEntity({
     required this.id,
     required this.name,
     required this.email,
-    required this.isActive,
   });
 
   factory UserEntity.fromJson(Map<String, dynamic> json) {
@@ -16,7 +14,6 @@ class UserEntity {
       id: json['id'],
       name: json['name'],
       email: json['email'],
-      isActive: json['isActive'],
     );
   }
 
@@ -25,7 +22,6 @@ class UserEntity {
       'id': id,
       'name': name,
       'email': email,
-      'isActive': isActive,
     };
   }
 }

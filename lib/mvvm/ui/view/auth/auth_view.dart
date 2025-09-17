@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:here4u/home_page.dart';
 import 'package:here4u/mvvm/ui/view/auth/login_view.dart';
-
 class AuthView extends StatelessWidget {
   const AuthView({super.key});
 
@@ -15,10 +14,13 @@ class AuthView extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasData) {
-          // Optionally check email verification
-          // if (!snapshot.data!.emailVerified) {
-          //   return const VerifyEmailPage();
-          // }
+          final user = snapshot.data!;
+          if (!user.emailVerified) {
+            // Logout and redirect
+            FirebaseAuth.instance.signOut();
+            return const LoginView();
+          }
+          // Show homepage if email is verified and user is logged in
           return const MyHomePage(title: 'Flutter Demo Home Page');
         }
         return const LoginView();

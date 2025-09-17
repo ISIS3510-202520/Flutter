@@ -1,0 +1,68 @@
+import 'package:flutter/material.dart';
+import 'package:here4u/mvvm/data/services/user_service.dart';
+import 'package:here4u/mvvm/ui/widgets/buttons/rounded_button.dart';
+import 'package:here4u/mvvm/ui/widgets/inputs/rounded_textbox.dart';
+import 'package:here4u/mvvm/ui/widgets/warnings/snack_warning.dart';
+
+class RegisterView extends StatefulWidget {
+  const RegisterView({Key? key}) : super(key: key);
+
+  @override
+  State<RegisterView> createState() => _RegisterViewState();
+}
+
+class _RegisterViewState extends State<RegisterView> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+
+  void _register() async {
+    final email = _emailController.text;
+    final password = _passwordController.text;
+    final name = _nameController.text;
+    final userService = UserService();
+    await userService.registerWithEmail(email, password, name);
+    SnackWarning.show(context, 'Please check your email for verification.');
+    Navigator.pop(context); // Go back to login
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Register',
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 32),
+              RoundedTextbox(
+                hintText: 'Name',
+                controller: _nameController,
+              ),
+              const SizedBox(height: 16),
+              RoundedTextbox(
+                hintText: 'Email',
+                controller: _emailController,
+              ),
+              const SizedBox(height: 16),
+              RoundedTextbox(
+                hintText: 'Password',
+                controller: _passwordController,
+                obscureText: true,
+              ),
+              const SizedBox(height: 32),
+              RoundedButton(
+                text: 'Register',
+                onPressed: _register,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

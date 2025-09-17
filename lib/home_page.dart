@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:here4u/core/utils/validators.dart';
-import 'package:here4u/mvvm/ui/widgets/buttons/rounded_button.dart';
-import 'package:here4u/mvvm/ui/widgets/inputs/rounded_textbox.dart';
 
 class MyHomePage extends StatefulWidget {
+  // #TODO delete this example home page
+  
   const MyHomePage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -77,24 +76,6 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            const RoundedTextbox(
-              hintText: 'Email',
-              validator: emailValidator,
-            ),
-            const RoundedTextbox(
-              hintText:  'Password', 
-              obscureText: true, 
-              validator: passwordValidator
-            ),
-            RoundedButton(
-              text: 'Press Me',
-              // when pressed simple popup 
-              onPressed: () {
-                // ignore: avoid_print
-                print('Button Pressed');
-              },  
-            ),
-
           ],
         ),
       ),
