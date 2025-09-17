@@ -12,7 +12,6 @@ class UserService {
       );
       return credential.user;
     } catch (e) {
-      print('Login error: $e');
       return null;
     }
   }
@@ -25,7 +24,6 @@ class UserService {
           .where('email', isEqualTo: email)
           .get();
       if (existing.docs.isNotEmpty) {
-        print('User already exists with this email.');
         return null;
       }
 
@@ -51,7 +49,6 @@ class UserService {
 
       return credential.user;
     } catch (e) {
-      print('Register error: $e');
       return null;
     }
   }
