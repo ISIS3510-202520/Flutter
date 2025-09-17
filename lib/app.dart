@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:here4u/mvvm/ui/view/Identify_emotions/Identify_emotions_view.dart';
 import 'package:here4u/mvvm/ui/view/auth/auth_view.dart';
 class App extends StatelessWidget {
   const App({super.key});
@@ -28,6 +29,11 @@ class App extends StatelessWidget {
         textTheme: GoogleFonts.openSansTextTheme(), // Apply Google Fonts Sans-serif
       ),
       home: const AuthView(),
+
+      // If you want to use IdentifyEmotionsView with its ViewModel, uncomment below
+
+      // home: const IdentifyEmotionsView(),
+
     );
   }
 }

@@ -11,9 +11,6 @@ class IdentifyEmotionsView extends StatelessWidget {
     final emotions = viewModel.emotions;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Identify Emotions"),
-      ),
       body: ScrollConfiguration(
         behavior: ScrollConfiguration.of(context).copyWith(
           scrollbars: false,
@@ -35,13 +32,13 @@ class IdentifyEmotionsView extends StatelessWidget {
           ? FloatingActionButton(
               backgroundColor: Color(0xFF7C8FBB),
               onPressed: () {
-                if (viewModel.confirmSelection()) {
-                  Navigator.pushNamed(
-                    context,
-                    "/next",
-                    arguments: viewModel.selectedEmotion,
-                  );
-                }
+                // if (viewModel.confirmSelection()) {
+                //   Navigator.pushNamed(
+                //     context,
+                //     "/next",
+                //     arguments: viewModel.selectedEmotion,
+                //   );
+                // }
               },
               child: const Icon(Icons.arrow_forward),
             )
