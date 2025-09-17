@@ -43,7 +43,7 @@ class _RegisterViewState extends State<RegisterView> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  'Register',
+                  'Create Account',
                   style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 32),
@@ -65,9 +65,24 @@ class _RegisterViewState extends State<RegisterView> {
                   validator: passwordValidator,
                 ),
                 const SizedBox(height: 32),
+                // Register Button
                 RoundedButton(
-                  text: 'Register',
-                  onPressed: _register,
+									text: 'Signup',
+									onPressed: _register,
+                  icon: Icons.app_registration,
+								),
+
+                const SizedBox(height: 16),
+
+                // Back to Login Button
+                RoundedButton(
+                  text: 'Back to Login',
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  color: const Color(0xFF8CC0CF),
+                  textColor: Colors.black,
+                  icon: Icons.login,
                 ),
               ],
             ),

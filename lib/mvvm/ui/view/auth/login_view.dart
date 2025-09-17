@@ -35,9 +35,16 @@ class _LoginViewState extends State<LoginView> {
 							mainAxisAlignment: MainAxisAlignment.center,
 							children: [
 								const Text(
-									'Login',
+									'Welcome to',
 									style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
 								),
+
+								Image.asset(
+									'assets/here4u_logo_350x350.png',
+									width: 200,
+									height: 200,
+								),
+
 								const SizedBox(height: 32),
 								RoundedTextbox(
 									hintText: 'Email',
@@ -56,19 +63,23 @@ class _LoginViewState extends State<LoginView> {
 								RoundedButton(
 									text: 'Login',
 									onPressed: _login,
+                  icon: Icons.login,
 								),
+
+                const SizedBox(height: 16),
 
                 // Register Button
                 RoundedButton(
-									text: 'Register',
+									text: 'Signup',
 									onPressed: () {
 										Navigator.push(
 											context,
 											MaterialPageRoute(builder: (context) => const RegisterView()),
 										);
 									},
-									color: Colors.grey[300]!,
+									color: const Color(0xFF8CC0CF),
 									textColor: Colors.black,
+                  icon: Icons.app_registration,
 								),
 							],
 						),
