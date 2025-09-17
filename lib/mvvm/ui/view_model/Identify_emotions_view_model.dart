@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 class IdentifyEmotionsViewModel extends ChangeNotifier {
   
-  final List<String> emotions = ["Happy", "Sad", "Angry", "Excited", "Calm"];
+  final List<String> emotions = ["Happy", "Sad", "Angry", "Excited", "Calm, Anxious", "Bored", "Confused", "Surprised", "Fearful", "Disgusted"];
 
   
   String? selectedEmotion;
