@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:here4u/mvvm/ui/view/journaling/journaling_view.dart';
 import 'package:here4u/mvvm/ui/view_model/Identify_emotions_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -32,13 +33,16 @@ class IdentifyEmotionsView extends StatelessWidget {
           ? FloatingActionButton(
               backgroundColor: Color(0xFF7C8FBB),
               onPressed: () {
-                // if (viewModel.confirmSelection()) {
-                //   Navigator.pushNamed(
-                //     context,
-                //     "/next",
-                //     arguments: viewModel.selectedEmotion,
-                //   );
-                // }
+                if (viewModel.confirmSelection()) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => JournalingView(
+                        emotion: viewModel.selectedEmotion!,
+                      ),
+                    ),
+                  );
+                }
               },
               child: const Icon(Icons.arrow_forward),
             )
