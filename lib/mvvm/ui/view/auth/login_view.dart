@@ -27,6 +27,7 @@ class _LoginViewState extends State<LoginView> {
       SnackWarning.show(context, result);
       return; // Abort login
     }
+    if (!mounted) return;
     // Proceed to home via auth_view
     Navigator.push(
       context,

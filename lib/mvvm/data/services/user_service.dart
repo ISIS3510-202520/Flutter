@@ -47,7 +47,6 @@ class UserService {
         return null;
       }
     } catch (e) {
-      print('[ERROR!]: $e');
       return null;
     }
   }
