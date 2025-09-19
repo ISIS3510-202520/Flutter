@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:here4u/mvvm/ui/view/Identify_emotions/Identify_emotions_view.dart';
+import 'package:here4u/mvvm/ui/view/Identify_emotions/identify_emotions_view.dart';
 import 'package:here4u/mvvm/ui/view/auth/auth_view.dart';
 import 'package:here4u/mvvm/ui/view/home/home_view.dart';
 class App extends StatelessWidget {
