@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:here4u/mvvm/ui/view/auth/auth_view.dart';
 import 'package:here4u/mvvm/ui/view/auth/register_view.dart';
 import 'package:here4u/mvvm/ui/view_model/login_view_model.dart';
+import 'package:here4u/mvvm/ui/view_model/register_view_model.dart';
 import 'package:here4u/mvvm/ui/widgets/buttons/rounded_button.dart';
 import 'package:here4u/mvvm/ui/widgets/inputs/rounded_textbox.dart';
 import 'package:here4u/mvvm/ui/widgets/warnings/snack_warning.dart';
+import 'package:provider/provider.dart';
 
 class LoginView extends StatefulWidget {
 	const LoginView({super.key});
@@ -18,12 +21,32 @@ class _LoginViewState extends State<LoginView> {
   final viewModel = LoginViewModel();
   
   void _login() async {
+    final viewModel = context.read<LoginViewModel>();
     final result = await viewModel.login(_emailController.text, _passwordController.text);
     if (result != null && mounted) {
       SnackWarning.show(context, result);
       return; // Abort login
     }
-    // Proceed to home
+    // Proceed to home via auth_view
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AuthView(),
+      ),
+    );
+  }
+
+  void _register() {
+    final viewModel = RegisterViewModel();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChangeNotifierProvider(
+          create: (_) => viewModel,
+          child: const RegisterView(),
+        ),
+      ),
+    );
   }
 
 	@override
@@ -71,12 +94,7 @@ class _LoginViewState extends State<LoginView> {
                 // Register Button
                 RoundedButton(
 									text: 'Signup',
-									onPressed: () {
-										Navigator.push(
-											context,
-											MaterialPageRoute(builder: (context) => const RegisterView()),
-										);
-									},
+									onPressed: _register,
 									color: const Color(0xFF8CC0CF),
 									textColor: Colors.black,
                   icon: Icons.app_registration,

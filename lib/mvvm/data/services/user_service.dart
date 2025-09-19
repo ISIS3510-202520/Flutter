@@ -18,7 +18,6 @@ class UserService {
 
   Future<User?> registerWithEmail(String email, String password, String name) async {
     try {
-      // Check if user already exists with this email in Firestore
       final existing = await FirebaseFirestore.instance
           .collection('users')
           .where('email', isEqualTo: email)
@@ -26,29 +25,29 @@ class UserService {
       if (existing.docs.isNotEmpty) {
         return null;
       }
-
       UserCredential credential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      await credential.user?.updateDisplayName(name);
-
-      // Create UserEntity and push to Firestore
-      final userEntity = UserEntity(
-        id: credential.user!.uid,
-        name: name,
-        email: email,
-      );
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(credential.user!.uid)
-          .set(userEntity.toJson());
-
-      // Send email verification
-      await credential.user?.sendEmailVerification();
-
-      return credential.user;
+      final user = credential.user;
+      if (user != null) {
+        final userEntity = UserEntity(
+          id: user.uid,
+          name: name,
+          email: email,
+        );
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .set(userEntity.toJson());
+        await user.sendEmailVerification();
+        await user.updateDisplayName(name);
+        return user;
+      } else {
+        return null;
+      }
     } catch (e) {
+      print('[ERROR!]: $e');
       return null;
     }
   }
