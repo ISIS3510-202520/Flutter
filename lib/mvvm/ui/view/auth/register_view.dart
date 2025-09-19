@@ -86,7 +86,7 @@ class _RegisterViewState extends State<RegisterView> {
                   const SizedBox(height: 16),
                   // Back to Login Button
                   RoundedButton(
-                    text: 'Back to Login',
+                    text: 'Back',
                     onPressed: () {
                       Navigator.pop(context);
                     },
