@@ -29,12 +29,14 @@ class _LoginViewState extends State<LoginView> {
     }
     if (!mounted) return;
     // Proceed to home via auth_view
+	Navigator.pop(context); // Close login view
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => AuthView(),
       ),
     );
+	return;
   }
 
   void _register() {
