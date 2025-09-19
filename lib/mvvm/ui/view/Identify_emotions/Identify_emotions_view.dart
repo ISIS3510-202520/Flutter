@@ -1,3 +1,5 @@
+// fixed filename
+
 import 'package:flutter/material.dart';
 import 'package:here4u/mvvm/ui/view/journaling/journaling_view.dart';
 import 'package:here4u/mvvm/ui/view_model/Identify_emotions_view_model.dart';
@@ -62,7 +64,7 @@ class IdentifyEmotionsView extends StatelessWidget {
       return GestureDetector(
         onTap: () {
           viewModel.selectEmotion(emotion);
-          print("Selected: $emotion");
+          // print("Selected: $emotion");
         },
         child: Container(
           width: circleSize,
