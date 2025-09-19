@@ -1,4 +1,3 @@
-//fixed filename
 import 'package:flutter/foundation.dart';
 
 class IdentifyEmotionsViewModel extends ChangeNotifier {
