@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:here4u/mvvm/ui/view/journaling/journaling_view.dart';
-import 'package:here4u/mvvm/ui/view_model/identify_emotions_view_model11.dart';
+import 'package:here4u/mvvm/ui/view_model/identify_emotions_view_model.dart';
 import 'package:provider/provider.dart';
 
 class IdentifyEmotionsView extends StatelessWidget {
