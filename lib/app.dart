@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:here4u/mvvm/ui/view/Identify_emotions/Identify_emotions_view.dart';
 import 'package:here4u/mvvm/ui/view/auth/auth_view.dart';
-import 'package:here4u/mvvm/ui/view/home/home_view.dart';
 class App extends StatelessWidget {
   const App({super.key});
 
@@ -30,19 +28,6 @@ class App extends StatelessWidget {
         textTheme: GoogleFonts.openSansTextTheme(), // Apply Google Fonts Sans-serif
       ),
       home: const AuthView(),
-
-      // If you want to use Home and IdentifyEmotionsView with its ViewModel, uncomment below and comment home:const AuthView()
-
-      // home: const HomeView(),
-      // routes: {
-      //   '/identify': (_) => const IdentifyEmotionsView(),
-      //   // Descomentar cuando sean reales:
-      //   // '/profile': (_) => const ProfileView(),
-      //   // '/achievements': (_) => const AchievementsView(),
-      //   // '/exercises': (_) => const ExercisesView(),
-      //   // '/emergency': (_) => const EmergencyView(),
-      // },
-
     );
   }
 }
