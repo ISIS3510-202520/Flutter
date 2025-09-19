@@ -19,23 +19,16 @@ Future<void> main() async {
   // Load the app
   runApp(const App());
 
-  // If you want to use IdentifyEmotionsView with its ViewModel, uncomment below
+  // If you want to use Home and IdentifyEmotionsView with its ViewModel, uncomment below
 
   // runApp(
-  //   ChangeNotifierProvider(
-  //     create: (_) => IdentifyEmotionsViewModel(),
+  //   MultiProvider(
+  //     providers: [
+  //       ChangeNotifierProvider(create: (_) => HomeViewModel()),
+  //       // opcional: dejar listo IdentifyEmotions VM si su vista lo requiere
+  //       ChangeNotifierProvider(create: (_) => IdentifyEmotionsViewModel()),
+  //     ],
   //     child: const App(),
   //   ),
   // );
-
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => HomeViewModel()),
-        // opcional: dejar listo IdentifyEmotions VM si su vista lo requiere
-        ChangeNotifierProvider(create: (_) => IdentifyEmotionsViewModel()),
-      ],
-      child: const App(),
-    ),
-  );
 }

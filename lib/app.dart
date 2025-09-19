@@ -29,19 +29,19 @@ class App extends StatelessWidget {
         // tested with just a hot reload.
         textTheme: GoogleFonts.openSansTextTheme(), // Apply Google Fonts Sans-serif
       ),
-      //home: const AuthView(),
+      home: const AuthView(),
 
-      // If you want to use Home and IdentifyEmotionsView with its ViewModel, uncomment below
+      // If you want to use Home and IdentifyEmotionsView with its ViewModel, uncomment below and comment home:const AuthView()
 
-      home: const HomeView(),
-      routes: {
-        '/identify': (_) => const IdentifyEmotionsView(),
-        // Descomentar cuando sean reales:
-        // '/profile': (_) => const ProfileView(),
-        // '/achievements': (_) => const AchievementsView(),
-        // '/exercises': (_) => const ExercisesView(),
-        // '/emergency': (_) => const EmergencyView(),
-      },
+      // home: const HomeView(),
+      // routes: {
+      //   '/identify': (_) => const IdentifyEmotionsView(),
+      //   // Descomentar cuando sean reales:
+      //   // '/profile': (_) => const ProfileView(),
+      //   // '/achievements': (_) => const AchievementsView(),
+      //   // '/exercises': (_) => const ExercisesView(),
+      //   // '/emergency': (_) => const EmergencyView(),
+      // },
 
     );
   }
