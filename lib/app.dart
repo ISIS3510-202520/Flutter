@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:here4u/mvvm/ui/view/auth/auth_view.dart';
+
 class App extends StatelessWidget {
   const App({super.key});
 
@@ -25,8 +26,11 @@ class App extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        textTheme: GoogleFonts.openSansTextTheme(), // Apply Google Fonts Sans-serif
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white), // White color as base
+        textTheme:
+            GoogleFonts.openSansTextTheme(), // Apply Google Fonts Sans-serif
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.white,
+        ), // White color as base
         scaffoldBackgroundColor: Colors.white, // White background for Scaffold
       ),
       home: const AuthView(),

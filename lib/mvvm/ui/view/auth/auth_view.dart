@@ -5,6 +5,7 @@ import 'package:here4u/mvvm/ui/view/home/home_view.dart';
 import 'package:here4u/mvvm/ui/view_model/login_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:here4u/mvvm/ui/view_model/home_view_model.dart';
+
 class AuthView extends StatelessWidget {
   const AuthView({super.key});
 
