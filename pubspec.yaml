@@ -55,8 +55,7 @@ dev_dependencies:
 
 flutter_icons:
   android: true
-  ios: true
-  image_path: "assets/here4u_icon_250x250.png"
+  image_path: "assets/here4u_icon_500x500.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

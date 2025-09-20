@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeViewModel extends ChangeNotifier {
@@ -23,8 +24,10 @@ class HomeViewModel extends ChangeNotifier {
   void onTapProfile(BuildContext context) {
     // Aún no hay pantalla -> placeholder
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Profile info: próximamente")),
+      const SnackBar(content: Text("Profile info: soon, logout instead")),
     );
+    // Simple logout of firebase auth
+    FirebaseAuth.instance.signOut();
   }
 
   void onTapAchievements(BuildContext context) {

@@ -7,6 +7,7 @@ class RoundedButton extends StatelessWidget {
   final bool isBold;
   final Color color;
   final Color textColor;
+  final double width;
 
   const RoundedButton({
     super.key,
@@ -16,6 +17,7 @@ class RoundedButton extends StatelessWidget {
     this.isBold = true,
     this.color = const Color(0xFF86D9F0),
     this.textColor = Colors.black,
+    this.width = 150,
   });
 
   @override
@@ -47,17 +49,20 @@ class RoundedButton extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16), // Sharper round edges
+      child: SizedBox(
+        width: width,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: color,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16), // Sharper round edges
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+            elevation: 0,
           ),
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          elevation: 0,
+          onPressed: onPressed,
+          child: buttonChild,
         ),
-        onPressed: onPressed,
-        child: buttonChild,
       ),
     );
   }
