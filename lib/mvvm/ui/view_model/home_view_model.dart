@@ -1,5 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:here4u/mvvm/ui/view/profile/profile_view.dart';
+import 'package:here4u/mvvm/ui/view_model/profile_view_model.dart';
 
 class HomeViewModel extends ChangeNotifier {
   // Estado (mock mientras no hay backend)
@@ -22,12 +25,14 @@ class HomeViewModel extends ChangeNotifier {
 
   // Acciones de UI
   void onTapProfile(BuildContext context) {
-    // Aún no hay pantalla -> placeholder
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Profile info: soon, logout instead")),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ChangeNotifierProvider(
+          create: (_) => ProfileViewModel()..init(),
+          child: const ProfileView(),
+        ),
+      ),
     );
-    // Simple logout of firebase auth
-    FirebaseAuth.instance.signOut();
   }
 
   void onTapAchievements(BuildContext context) {
