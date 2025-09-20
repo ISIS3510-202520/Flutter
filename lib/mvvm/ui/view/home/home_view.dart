@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:here4u/mvvm/ui/view/Identify_emotions/identify_emotions_view.dart';
+import 'package:here4u/mvvm/ui/view_model/identify_emotions_view_model.dart';
 import 'package:provider/provider.dart';
 
 import 'package:here4u/mvvm/ui/view_model/home_view_model.dart';
@@ -9,12 +11,29 @@ import 'package:here4u/mvvm/ui/widgets/home/home_header.dart';
 import 'package:here4u/mvvm/ui/widgets/home/streak_badge.dart';
 import 'package:here4u/mvvm/ui/widgets/home/emergency_button.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
   @override
+  State<HomeView> createState() => _HomeViewState();
+}
+class _HomeViewState extends State<HomeView> {
+  
+  void _identifyEmotions() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChangeNotifierProvider(
+          create: (_) => IdentifyEmotionsViewModel(),
+          child: IdentifyEmotionsView(),
+        ),
+      ),
+    );
+}
+
+  @override
   Widget build(BuildContext context) {
-    final vm = context.watch<HomeViewModel>();
+    final viewModel = context.watch<HomeViewModel>();
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -35,8 +54,8 @@ class HomeView extends StatelessWidget {
                   // HEADER (no centrado)
                   HomeHeader(
                     titlePrefix: "Welcome  ",
-                    titleName: vm.displayName,
-                    onProfileTap: () => vm.onTapProfile(context),
+                    titleName: viewModel.displayName,
+                    onProfileTap: () => viewModel.onTapProfile(context),
                   ),
                   const SizedBox(height: 8),
                   const Divider(height: 16, thickness: 1, color: Color(0xFFEDEDED)),
@@ -55,7 +74,7 @@ class HomeView extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   // Streak
-                                  StreakBadge(days: vm.streakDays),
+                                  StreakBadge(days: viewModel.streakDays),
 
                                   const SizedBox(height: 24),
 
@@ -64,7 +83,7 @@ class HomeView extends StatelessWidget {
                                     width: buttonW,
                                     child: RoundedButton(
                                       text: "Achievements",
-                                      onPressed: () => vm.onTapAchievements(context),
+                                      onPressed: () => viewModel.onTapAchievements(context),
                                       isBold: true,
                                       color: const Color(0xFF7CC1C3),
                                       textColor: Colors.black,
@@ -77,7 +96,7 @@ class HomeView extends StatelessWidget {
                                     width: buttonW,
                                     child: RoundedButton(
                                       text: "Register Mood",
-                                      onPressed: () => vm.onTapRegisterMood(context),
+                                      onPressed: _identifyEmotions,
                                       isBold: true,
                                       color: const Color(0xFF86D9F0),
                                       textColor: Colors.black,
@@ -90,7 +109,7 @@ class HomeView extends StatelessWidget {
                                     width: buttonW,
                                     child: RoundedButton(
                                       text: "Daily exercises",
-                                      onPressed: () => vm.onTapExercises(context),
+                                      onPressed: () => viewModel.onTapExercises(context),
                                       isBold: true,
                                       color: const Color(0xFF86D9F0),
                                       textColor: Colors.black,
@@ -102,7 +121,7 @@ class HomeView extends StatelessWidget {
                                   // Emergency (grande)
                                   EmergencyButton(
                                     width: emergencyW,
-                                    onPressed: () => vm.onTapEmergency(context),
+                                    onPressed: () => viewModel.onTapEmergency(context),
                                     textStyle: textTheme.titleMedium?.copyWith(
                                       fontWeight: FontWeight.w600,
                                     ),
