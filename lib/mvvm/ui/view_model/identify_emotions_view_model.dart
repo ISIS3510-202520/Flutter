@@ -1,19 +1,18 @@
 import 'package:flutter/foundation.dart';
+import 'package:here4u/models/emotion_entity.dart';
+
 
 class IdentifyEmotionsViewModel extends ChangeNotifier {
-  
-  final List<String> emotions = ["Happy", "Sad", "Angry", "Excited", "Calm", "Anxious", "Bored", "Confused", "Surprised", "Fearful", "Disgusted", "Lonely", "Proud"];
+  final List<EmotionEntity> emotions = SeedEmotions.list;
 
-  
-  String? selectedEmotion;
+  EmotionEntity? selectedEmotion;
 
-  void selectEmotion(String emotion) {
+  void selectEmotion(EmotionEntity emotion) {
     selectedEmotion = emotion;
     notifyListeners();
   }
 
   bool confirmSelection() {
-    if (selectedEmotion == null) return false;
-    return true;
+    return selectedEmotion != null;
   }
 }

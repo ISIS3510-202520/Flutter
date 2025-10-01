@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:here4u/models/emotion_entity.dart';
 import 'package:here4u/mvvm/ui/view/journaling/journaling_view.dart';
 import 'package:here4u/mvvm/ui/view_model/identify_emotions_view_model.dart';
 import 'package:provider/provider.dart';
@@ -31,7 +32,7 @@ class IdentifyEmotionsView extends StatelessWidget {
       ),
       floatingActionButton: viewModel.selectedEmotion != null
           ? FloatingActionButton(
-              backgroundColor: Color(0xFF7C8FBB),
+              backgroundColor: const Color(0xFF7C8FBB),
               onPressed: () {
                 if (viewModel.confirmSelection()) {
                   Navigator.push(
@@ -51,7 +52,7 @@ class IdentifyEmotionsView extends StatelessWidget {
   }
 
   List<Widget> _buildEmotionCircles(
-    List<String> emotions,
+    List<EmotionEntity> emotions,
     IdentifyEmotionsViewModel viewModel,
   ) {
     const double circleSize = 130;
@@ -62,24 +63,27 @@ class IdentifyEmotionsView extends StatelessWidget {
       return GestureDetector(
         onTap: () {
           viewModel.selectEmotion(emotion);
-          // print("Selected: $emotion");
         },
         child: Container(
           width: circleSize,
           height: circleSize,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Color(0xFF86D9F0),
+            color: emotion.color, // dynamic background color
             border: Border.all(
-              color: isSelected ? const Color(0xFF7C8FBB) : Color(0xFF8CC0CF),
+              color: isSelected ? const Color(0xFF7C8FBB) : Colors.grey,
               width: 3,
             ),
           ),
           child: Center(
             child: Text(
-              emotion,
+              emotion.name,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white, // ensures readability
+              ),
             ),
           ),
         ),
