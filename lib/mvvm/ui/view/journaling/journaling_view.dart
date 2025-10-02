@@ -14,7 +14,7 @@ class JournalingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => JournalingViewModel(emotion, userId),
+      create: (_) => JournalingViewModel(emotion: emotion, userId: userId),
       child: _JournalingContent(emotion: emotion),
     );
   }
@@ -55,9 +55,9 @@ class _JournalingContentState extends State<_JournalingContent> {
                   children: [
                     const TextSpan(text: 'Describe what makes you feel '),
                     TextSpan(
-                      text: widget.emotion.name, // <-- emotion name
+                      text: widget.emotion.name,
                       style: TextStyle(
-                        color: widget.emotion.color, // <-- emotion color
+                        color: widget.emotion.color,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -93,17 +93,15 @@ class _JournalingContentState extends State<_JournalingContent> {
                 onPressed: () {
                   viewModel.addToJournal(_controller.text);
 
-                  final entry = viewModel.currentEntry; // optional: you could log it
-                  print("Created journal entry: ${entry?.description}");
-
+                  final entry = viewModel.currentEntry;
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Entry added to journal!")),
                   );
 
                   _controller.clear();
 
-                  // Redirect to Home and replace current screen
-                  Navigator.pushAndRemoveUntil(
+                  
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (_) => ChangeNotifierProvider(
@@ -111,11 +109,8 @@ class _JournalingContentState extends State<_JournalingContent> {
                         child: const HomeView(),
                       ),
                     ),
-                    (route) => false, // remove all previous routes
                   );
                 },
-
-
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF86D9F0),
                   padding:
