@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:here4u/mvvm/ui/view/Identify_emotions/identify_emotions_view.dart';
 import 'package:here4u/mvvm/ui/view_model/identify_emotions_view_model.dart';
@@ -20,11 +21,12 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   
   void _identifyEmotions() {
+    final userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ChangeNotifierProvider(
-          create: (_) => IdentifyEmotionsViewModel(),
+          create: (_) => IdentifyEmotionsViewModel(userId: userId),
           child: IdentifyEmotionsView(),
         ),
       ),

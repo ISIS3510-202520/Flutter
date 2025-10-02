@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:here4u/mvvm/ui/view/home/home_view.dart';
+import 'package:here4u/mvvm/ui/view_model/home_view_model.dart';
 import 'package:here4u/mvvm/ui/view_model/journaling_view_model.dart';
 import 'package:here4u/models/emotion.dart';
 import 'package:provider/provider.dart';
 
 class JournalingView extends StatelessWidget {
   final Emotion emotion;
+  final String userId;
 
-  const JournalingView({super.key, required this.emotion});
+  const JournalingView({super.key, required this.emotion, required this.userId});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => JournalingViewModel(emotion.name),
+      create: (_) => JournalingViewModel(emotion, userId),
       child: _JournalingContent(emotion: emotion),
     );
   }
@@ -90,14 +93,29 @@ class _JournalingContentState extends State<_JournalingContent> {
                 onPressed: () {
                   viewModel.addToJournal(_controller.text);
 
+                  final entry = viewModel.currentEntry; // optional: you could log it
+                  print("Created journal entry: ${entry?.description}");
+
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Entry added to journal!"),
-                    ),
+                    const SnackBar(content: Text("Entry added to journal!")),
                   );
 
                   _controller.clear();
+
+                  // Redirect to Home and replace current screen
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChangeNotifierProvider(
+                        create: (_) => HomeViewModel(),
+                        child: const HomeView(),
+                      ),
+                    ),
+                    (route) => false, // remove all previous routes
+                  );
                 },
+
+
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF86D9F0),
                   padding:

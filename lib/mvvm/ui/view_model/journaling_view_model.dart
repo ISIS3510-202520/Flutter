@@ -1,18 +1,24 @@
 import 'package:flutter/foundation.dart';
+import 'package:here4u/models/journal.dart';
+import 'package:here4u/models/emotion.dart';
 
 class JournalingViewModel extends ChangeNotifier {
-  final String emotion;
+  final Emotion emotion;
+  final String userId; 
 
-  JournalingViewModel(this.emotion);
+  JournalingViewModel(this.emotion, this.userId);
 
-  String? _journalText;
-  String? get journalText => _journalText;
+  Journal? _currentEntry;
+  Journal? get currentEntry => _currentEntry;
 
   void addToJournal(String text) {
     if (text.trim().isEmpty) return;
 
-    _journalText = text;
-
+    _currentEntry = Journal.create(
+      userId: userId,
+      emotionId: emotion.id,
+      description: text,
+    );
 
     notifyListeners();
   }
