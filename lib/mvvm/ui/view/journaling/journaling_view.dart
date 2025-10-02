@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:here4u/mvvm/ui/view_model/journaling_view_model.dart';
-import 'package:here4u/models/emotion_entity.dart';
+import 'package:here4u/models/emotion.dart';
 import 'package:provider/provider.dart';
 
 class JournalingView extends StatelessWidget {
-  final EmotionEntity emotion;
+  final Emotion emotion;
 
   const JournalingView({super.key, required this.emotion});
 
@@ -18,7 +18,7 @@ class JournalingView extends StatelessWidget {
 }
 
 class _JournalingContent extends StatefulWidget {
-  final EmotionEntity emotion;
+  final Emotion emotion;
 
   const _JournalingContent({required this.emotion});
 

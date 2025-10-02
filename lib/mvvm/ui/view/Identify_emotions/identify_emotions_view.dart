@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:here4u/models/emotion_entity.dart';
+import 'package:here4u/models/emotion.dart';
 import 'package:here4u/mvvm/ui/view/journaling/journaling_view.dart';
 import 'package:here4u/mvvm/ui/view_model/identify_emotions_view_model.dart';
 import 'package:provider/provider.dart';
@@ -52,7 +52,7 @@ class IdentifyEmotionsView extends StatelessWidget {
   }
 
   List<Widget> _buildEmotionCircles(
-    List<EmotionEntity> emotions,
+    List<Emotion> emotions,
     IdentifyEmotionsViewModel viewModel,
   ) {
     const double circleSize = 130;
