@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:here4u/mvvm/ui/view/home/home_view.dart';
+import 'package:here4u/mvvm/ui/view_model/home_view_model.dart';
 import 'package:here4u/mvvm/ui/view_model/journaling_view_model.dart';
-import 'package:here4u/models/emotion_entity.dart';
+import 'package:here4u/models/emotion.dart';
 import 'package:provider/provider.dart';
 
 class JournalingView extends StatelessWidget {
-  final EmotionEntity emotion;
+  final Emotion emotion;
+  final String userId;
 
-  const JournalingView({super.key, required this.emotion});
+  const JournalingView({super.key, required this.emotion, required this.userId});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => JournalingViewModel(emotion.name),
+      create: (_) => JournalingViewModel(emotion: emotion, userId: userId),
       child: _JournalingContent(emotion: emotion),
     );
   }
 }
 
 class _JournalingContent extends StatefulWidget {
-  final EmotionEntity emotion;
+  final Emotion emotion;
 
   const _JournalingContent({required this.emotion});
 
@@ -52,9 +55,9 @@ class _JournalingContentState extends State<_JournalingContent> {
                   children: [
                     const TextSpan(text: 'Describe what makes you feel '),
                     TextSpan(
-                      text: widget.emotion.name, // <-- emotion name
+                      text: widget.emotion.name,
                       style: TextStyle(
-                        color: widget.emotion.color, // <-- emotion color
+                        color: widget.emotion.color,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -90,13 +93,23 @@ class _JournalingContentState extends State<_JournalingContent> {
                 onPressed: () {
                   viewModel.addToJournal(_controller.text);
 
+                  final entry = viewModel.currentEntry;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Entry added to journal!"),
-                    ),
+                    const SnackBar(content: Text("Entry added to journal!")),
                   );
 
                   _controller.clear();
+
+                  
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ChangeNotifierProvider(
+                        create: (_) => HomeViewModel(),
+                        child: const HomeView(),
+                      ),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF86D9F0),
