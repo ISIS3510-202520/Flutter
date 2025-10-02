@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:here4u/mvvm/ui/view/auth/login_view.dart';
+import 'package:here4u/mvvm/ui/view/summaries/summary_view.dart';
+
 
 class ProfileViewModel extends ChangeNotifier {
   // Datos mínimos para pintar la pantalla
@@ -19,9 +21,8 @@ class ProfileViewModel extends ChangeNotifier {
 
   // Navegaciones aún no implementadas (las vistas no existen)
   void onTapSummaries(BuildContext context) {
-    // TODO: navegar a Summaries cuando exista
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Summaries: próximamente')),
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => SummaryView.route()),
     );
   }
 
