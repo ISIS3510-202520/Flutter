@@ -7,7 +7,6 @@ import 'package:here4u/mvvm/ui/widgets/buttons/rounded_button.dart';
 class SummaryView extends StatelessWidget {
   const SummaryView({super.key});
 
-  /// Úsalo al navegar: Navigator.push(context, MaterialPageRoute(builder: (_) => SummaryView.route()));
   static Widget route() {
     return ChangeNotifierProvider(
       create: (_) => SummaryViewModel()..init(),
@@ -32,7 +31,6 @@ class SummaryView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Título
                   Text(
                     'Summaries',
                     textAlign: TextAlign.center,
@@ -40,35 +38,23 @@ class SummaryView extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
 
-                  // Contenido central
                   Expanded(
                     child: Center(
                       child: SingleChildScrollView(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Bloque: sentimiento más común
                             Text(
-                              '[${vm.commonFeeling}] you highlighted:\n${vm.highlights}',
+                              '\n${vm.summaryText}',
                               textAlign: TextAlign.center,
                               style: textTheme.headlineMedium?.copyWith(height: 1.25),
-                            ),
-                            const SizedBox(height: 28),
-
-                            // Bloque: insights recomendados
-                            Text(
-                              'Your recommended insights are:\n${vm.insights}',
-                              textAlign: TextAlign.center,
-                              style: textTheme.headlineMedium?.copyWith(height: 1.25),
-                            ),
-                            const SizedBox(height: 40),
+                            )
                           ],
                         ),
                       ),
                     ),
                   ),
 
-                  // Botón Back
                   Center(
                     child: SizedBox(
                       width: buttonW,
@@ -76,7 +62,7 @@ class SummaryView extends StatelessWidget {
                         text: "Back",
                         onPressed: () => vm.onTapBack(context),
                         isBold: false,
-                        color: const Color(0xFF8EDAF0), // azul claro del mock
+                        color: const Color(0xFF8EDAF0),
                         textColor: Colors.black,
                       ),
                     ),
