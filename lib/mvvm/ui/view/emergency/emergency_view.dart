@@ -25,12 +25,12 @@ class EmergencyView extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Center( // <--- centra horizontalmente todo
+        child: Center(
           child: SingleChildScrollView(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 480), // mejor en tablets
+              constraints: const BoxConstraints(maxWidth: 480),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center, // <--- centra verticalmente
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
@@ -40,67 +40,84 @@ class EmergencyView extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
 
-                  // Botones circulares
-                  Wrap(
-                    spacing: 28,
-                    runSpacing: 20,
-                    alignment: WrapAlignment.center,
-                    children: vm.contacts.map((c) {
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Material( // necesario para splash
-                            color: Colors.transparent,
-                            child: InkWell(
-                              customBorder: const CircleBorder(),
-                              onTap: () => _soonSnack(context, c.name),
-                              child: Ink(
-                                width: 96,
-                                height: 96,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFF86D9F0),
-                                  shape: BoxShape.circle,
+                  // Mostrar mensaje si no hay contactos
+                  if (vm.contacts.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 40),
+                      child: Text(
+                        "There are no contacts.",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: Colors.grey[600],
+                            ),
+                      ),
+                    )
+                  else
+                    Wrap(
+                      spacing: 28,
+                      runSpacing: 20,
+                      alignment: WrapAlignment.center,
+                      children: vm.contacts.map((c) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                customBorder: const CircleBorder(),
+                                onTap: () => _soonSnack(context, c.name),
+                                child: Ink(
+                                  width: 96,
+                                  height: 96,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF86D9F0),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.person,
+                                    size: 44,
+                                    color: Colors.black,
+                                  ),
                                 ),
-                                child: const Icon(Icons.person, size: 44, color: Colors.black),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            c.name,
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ],
-                      );
-                    }).toList(),
-                  ),
+                            const SizedBox(height: 8),
+                            Text(
+                              c.name,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                    ),
 
                   const SizedBox(height: 28),
 
-                  // Navegación a Add con Provider del VM
+                  // Botón para añadir contacto
                   RoundedButton(
                     text: "Add Contact",
                     color: Colors.pink[200]!,
                     textColor: Colors.black,
                     onPressed: () {
-                    final emergencyVm = context.read<EmergencyViewModel>(); // instancia actual
+                      final emergencyVm = context.read<EmergencyViewModel>();
 
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => MultiProvider(
-                          providers: [
-                            // VM del formulario
-                            ChangeNotifierProvider(create: (_) => AddEmergencyContactViewModel(authViewModel: context.read<AuthViewModel>())),
-                            // 👉 Reinyecta la misma instancia de EmergencyViewModel en el nuevo route
-                            ChangeNotifierProvider.value(value: emergencyVm),
-
-                          ],
-                          child: const AddEmergencyContactView(),
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => MultiProvider(
+                            providers: [
+                              ChangeNotifierProvider(
+                                create: (_) => AddEmergencyContactViewModel(
+                                  authViewModel: context.read<AuthViewModel>(),
+                                ),
+                              ),
+                              ChangeNotifierProvider.value(value: emergencyVm),
+                            ],
+                            child: const AddEmergencyContactView(),
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
                   ),
 
                   const SizedBox(height: 32),
