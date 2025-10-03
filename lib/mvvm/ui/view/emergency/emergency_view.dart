@@ -1,23 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:here4u/mvvm/ui/view_model/emergency_view_model.dart';
 import 'package:here4u/mvvm/ui/widgets/buttons/rounded_button.dart';
-import 'package:here4u/mvvm/ui/view/emergency/add_emergency_contact_view.dart';
-import 'package:here4u/mvvm/ui/view_model/add_emergency_contact_view_model.dart';
 
 class EmergencyView extends StatelessWidget {
   const EmergencyView({super.key});
-
-  void _soonSnack(BuildContext context, String name) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Próximamente podrás llamar a $name'),
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +27,7 @@ class EmergencyView extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
 
-                  // Mostrar mensaje si no hay contactos
+                  // Empty state
                   if (vm.contacts.isEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 40),
@@ -65,7 +52,7 @@ class EmergencyView extends StatelessWidget {
                               color: Colors.transparent,
                               child: InkWell(
                                 customBorder: const CircleBorder(),
-                                onTap: () => _soonSnack(context, c.name),
+                                onTap: () => vm.onTapContact(context, c.name),
                                 child: Ink(
                                   width: 96,
                                   height: 96,
@@ -94,30 +81,12 @@ class EmergencyView extends StatelessWidget {
 
                   const SizedBox(height: 28),
 
-                  // Botón para añadir contacto
+                  // Add contact
                   RoundedButton(
                     text: "Add Contact",
                     color: Colors.pink[200]!,
                     textColor: Colors.black,
-                    onPressed: () {
-                      final emergencyVm = context.read<EmergencyViewModel>();
-
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => MultiProvider(
-                            providers: [
-                              ChangeNotifierProvider(
-                                create: (_) => AddEmergencyContactViewModel(
-                                  authViewModel: context.read<AuthViewModel>(),
-                                ),
-                              ),
-                              ChangeNotifierProvider.value(value: emergencyVm),
-                            ],
-                            child: const AddEmergencyContactView(),
-                          ),
-                        ),
-                      );
-                    },
+                    onPressed: () => vm.startAddContactFlow(context),
                   ),
 
                   const SizedBox(height: 32),
@@ -130,7 +99,7 @@ class EmergencyView extends StatelessWidget {
 
                   RoundedButton(
                     text: "Back",
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => vm.goBack(context),
                     color: const Color(0xFF86D9F0),
                   ),
                 ],
