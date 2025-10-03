@@ -2,27 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:here4u/mvvm/ui/view/home/home_view.dart';
 import 'package:here4u/mvvm/ui/view_model/home_view_model.dart';
 import 'package:here4u/mvvm/ui/view_model/journaling_view_model.dart';
-import 'package:here4u/models/emotion.dart';
 import 'package:provider/provider.dart';
 
 class JournalingView extends StatelessWidget {
-  final Emotion emotion;
-
-  const JournalingView({super.key, required this.emotion});
+  const JournalingView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => JournalingViewModel(emotion: emotion),
-      child: _JournalingContent(emotion: emotion),
-    );
+    return const _JournalingContent();
   }
 }
 
 class _JournalingContent extends StatefulWidget {
-  final Emotion emotion;
-
-  const _JournalingContent({required this.emotion});
+  const _JournalingContent();
 
   @override
   State<_JournalingContent> createState() => _JournalingContentState();
@@ -30,6 +22,12 @@ class _JournalingContent extends StatefulWidget {
 
 class _JournalingContentState extends State<_JournalingContent> {
   final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +52,9 @@ class _JournalingContentState extends State<_JournalingContent> {
                   children: [
                     const TextSpan(text: 'Describe what makes you feel '),
                     TextSpan(
-                      text: widget.emotion.name,
+                      text: viewModel.emotion.name,
                       style: TextStyle(
-                        color: widget.emotion.color,
+                        color: viewModel.emotion.color,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -72,62 +70,98 @@ class _JournalingContentState extends State<_JournalingContent> {
                 hintText: "Write your thoughts here...",
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
-                    color: Colors.grey,
-                    width: 2.0,
-                  ),
+                  borderSide: const BorderSide(color: Colors.grey, width: 2.0),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
-                    color: Colors.grey,
-                    width: 2.5,
-                  ),
+                  borderSide: const BorderSide(color: Colors.grey, width: 2.5),
                 ),
               ),
             ),
             const SizedBox(height: 20),
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  viewModel.addToJournal(_controller.text, context);
+                onPressed: viewModel.isLoading
+                    ? null
+                    : () async {
+                        if (_controller.text.trim().isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                "Please write something before saving!",
+                              ),
+                              backgroundColor: Colors.orange,
+                            ),
+                          );
+                          return;
+                        }
 
-                  // final entry = viewModel.currentEntry;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Entry added to journal!")),
-                  );
+                        final success = await viewModel.saveJournal(
+                          _controller.text.trim(),
+                        );
 
-                  _controller.clear();
+                        if (success && mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Entry added to journal!"),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
 
-                  
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ChangeNotifierProvider(
-                        create: (_) => HomeViewModel(),
-                        child: const HomeView(),
-                      ),
-                    ),
-                  );
-                },
+                          _controller.clear();
+
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ChangeNotifierProvider(
+                                create: (_) => HomeViewModel(),
+                                child: const HomeView(),
+                              ),
+                            ),
+                          );
+                        } else if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                viewModel.errorMessage ??
+                                    "Failed to save journal entry",
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF86D9F0),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40,
+                    vertical: 16,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  "Add to Journal",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
+                child: viewModel.isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.black,
+                          ),
+                        ),
+                      )
+                    : const Text(
+                        "Add to Journal",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
               ),
-            )
+            ),
           ],
         ),
       ),

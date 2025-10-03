@@ -148,11 +148,15 @@ class AuthViewModel extends ChangeNotifier {
     if (_currentUser == null || _userEntity == null) return;
 
     try {
-      await _firestore.collection('users').doc(_currentUser!.uid).update({
+      print('[AuthViewModel] Updating streak to: $newStreak');
+      
+      final updateData = {
         'currentStreak': newStreak,
         'longestStreak': newStreak > _userEntity!.longestStreak ? newStreak : _userEntity!.longestStreak,
         'lastEntryDate': Timestamp.fromDate(DateTime.now()),
-      });
+      };
+      
+      await _firestore.collection('users').doc(_currentUser!.uid).update(updateData);
 
       _userEntity = _userEntity!.copyWith(
         currentStreak: newStreak,
@@ -160,9 +164,11 @@ class AuthViewModel extends ChangeNotifier {
         lastEntryDate: DateTime.now(),
       );
       
+      print('[AuthViewModel] Streak updated successfully: current=$newStreak, longest=${_userEntity!.longestStreak}');
       notifyListeners();
     } catch (e) {
       print('[AuthViewModel] Error updating streak: $e');
+      rethrow;
     }
   }
 }

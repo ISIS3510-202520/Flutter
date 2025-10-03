@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:here4u/models/emotion.dart';
 import 'package:here4u/mvvm/ui/view/journaling/journaling_view.dart';
+import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
 import 'package:here4u/mvvm/ui/view_model/identify_emotions_view_model.dart';
+import 'package:here4u/mvvm/ui/view_model/journaling_view_model.dart';
 import 'package:provider/provider.dart';
 
 class IdentifyEmotionsView extends StatelessWidget {
@@ -38,8 +40,12 @@ class IdentifyEmotionsView extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => JournalingView(
-                        emotion: viewModel.selectedEmotion!,
+                      builder: (context) => ChangeNotifierProvider(
+                        create: (context) => JournalingViewModel(
+                          emotion: viewModel.selectedEmotion!,
+                          authViewModel: context.read<AuthViewModel>(),
+                        ),
+                        child: const JournalingView(),
                       ),
                     ),
                   );
