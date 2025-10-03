@@ -87,6 +87,20 @@ class EmergencyView extends StatelessWidget {
                     color: Colors.pink[200]!,
                     textColor: Colors.black,
                     onPressed: () => vm.startAddContactFlow(context),
+                    icon: Icons.add,
+                    width: 200,
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Notify All button
+                  RoundedButton(
+                    text: "Notify All",
+                    color: Colors.red[400]!,
+                    textColor: Colors.white,
+                    onPressed: () => vm.notifyAllContacts(context),
+                    icon: Icons.notifications_active,
+                    width: 200,
                   ),
 
                   const SizedBox(height: 32),
@@ -101,6 +115,8 @@ class EmergencyView extends StatelessWidget {
                     text: "Back",
                     onPressed: () => vm.goBack(context),
                     color: const Color(0xFF86D9F0),
+                    icon: Icons.arrow_back,
+                    width: 200,
                   ),
                 ],
               ),
