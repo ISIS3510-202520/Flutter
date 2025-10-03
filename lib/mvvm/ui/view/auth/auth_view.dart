@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import 'package:here4u/mvvm/ui/view/auth/login_view.dart';
 import 'package:here4u/mvvm/ui/view/home/home_view.dart';
+import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
 import 'package:here4u/mvvm/ui/view_model/login_view_model.dart';
-import 'package:provider/provider.dart';
 import 'package:here4u/mvvm/ui/view_model/home_view_model.dart';
 
 class AuthView extends StatelessWidget {
@@ -11,15 +11,16 @@ class AuthView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+    return Consumer<AuthViewModel>(
+      builder: (context, authViewModel, child) {
+        if (authViewModel.isLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
         }
-        if (snapshot.hasData) {
-          final user = snapshot.data!;
-          if (!user.emailVerified) {
+
+        if (authViewModel.isAuthenticated) {
+          if (!authViewModel.isEmailVerified) {
             return ChangeNotifierProvider(
               create: (_) => LoginViewModel(),
               child: const LoginView(),
@@ -31,6 +32,8 @@ class AuthView extends StatelessWidget {
             child: const HomeView(),
           );
         }
+
+        // User is not authenticated
         return ChangeNotifierProvider(
           create: (_) => LoginViewModel(),
           child: const LoginView(),

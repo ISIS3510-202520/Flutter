@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:here4u/mvvm/ui/view_model/profile_view_model.dart';
+import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
 import 'package:here4u/mvvm/ui/widgets/buttons/rounded_button.dart';
 
 class ProfileView extends StatelessWidget {
@@ -10,6 +11,7 @@ class ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<ProfileViewModel>();
+    final authViewModel = context.watch<AuthViewModel>();
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -43,22 +45,21 @@ class ProfileView extends StatelessWidget {
                       CircleAvatar(
                         radius: 64,
                         backgroundColor: const Color(0xFFF7CFC6), // rosado suave
-                        backgroundImage:
-                            (vm.photoUrl != null) ? NetworkImage(vm.photoUrl!) : null,
-                        child: (vm.photoUrl == null)
-                            ? Icon(Icons.person, size: 56, color: Colors.black.withOpacity(0.8))
-                            : null,
+                        child: Icon(
+                          Icons.person, 
+                          size: 56, 
+                          color: Colors.black.withValues(alpha: 0.8)
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        vm.displayName,
-                        style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w500),
+                        authViewModel.displayName,
+                        style: textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
-
-                  const SizedBox(height: 12),
-                  const Divider(height: 24, thickness: 1, color: Color(0xFFEDEDED)),
                   const SizedBox(height: 8),
 
                   // ========= CONTENIDO CENTRAL (centrado en ancho y largo) =========
@@ -82,6 +83,7 @@ class ProfileView extends StatelessWidget {
                                       isBold: true,
                                       color: const Color(0xFFF7CFC6), // mismo rosa del mock
                                       textColor: Colors.black,
+                                      icon: Icons.summarize,
                                     ),
                                   ),
                                   const SizedBox(height: 14),
@@ -95,6 +97,7 @@ class ProfileView extends StatelessWidget {
                                       isBold: true,
                                       color: const Color(0xFFF7CFC6),
                                       textColor: Colors.black,
+                                      icon: Icons.book,
                                     ),
                                   ),
                                   const SizedBox(height: 24),
@@ -105,9 +108,24 @@ class ProfileView extends StatelessWidget {
                                     child: RoundedButton(
                                       text: "Sign Out",
                                       onPressed: () => vm.onTapSignOut(context),
-                                      isBold: false,
+                                      isBold: true,
                                       color: const Color(0xFF7CB4C3), // azul medio
                                       textColor: Colors.black,
+                                      icon: Icons.logout,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  // Add the Back button here
+                                  SizedBox(
+                                    width: buttonW,
+                                    child: RoundedButton(
+                                      text: 'Back',
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      color: const Color(0xFF8CC0CF),
+                                      textColor: Colors.black,
+                                      icon: Icons.arrow_back,
                                     ),
                                   ),
                                   const SizedBox(height: 16),

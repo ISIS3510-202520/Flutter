@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:here4u/mvvm/ui/view/Identify_emotions/identify_emotions_view.dart';
+import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
 import 'package:here4u/mvvm/ui/view_model/identify_emotions_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +20,9 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 class _HomeViewState extends State<HomeView> {
+  // Define button width as a constant
+  static const double buttonW = 220.0;
+  static const double emergencyW = 260.0;
   
   void _identifyEmotions() {
     final userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
@@ -36,30 +40,21 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<HomeViewModel>();
+    final authViewModel = context.watch<AuthViewModel>(); // Add this
     final textTheme = Theme.of(context).textTheme;
-
     return Scaffold(
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final maxW = constraints.maxWidth;
-            // Botones medios ~70% del ancho, tope 360
-            final buttonW = maxW * 0.70 > 360 ? 360.0 : maxW * 0.70;
-            // Botón Emergency ~85% del ancho, tope 420
-            final emergencyW = maxW * 0.85 > 420 ? 420.0 : maxW * 0.85;
-
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // HEADER (no centrado)
                   HomeHeader(
-                    titlePrefix: "Welcome  ",
-                    titleName: viewModel.displayName,
+                    titlePrefix: "Welcome ",
+                    titleName: authViewModel.displayName, // Use authViewModel
                     onProfileTap: () => viewModel.onTapProfile(context),
                   ),
-                  const SizedBox(height: 8),
                   const Divider(height: 16, thickness: 1, color: Color(0xFFEDEDED)),
                   const SizedBox(height: 8),
 
@@ -76,7 +71,7 @@ class _HomeViewState extends State<HomeView> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   // Streak
-                                  StreakBadge(days: viewModel.streakDays),
+                                  StreakBadge(days: authViewModel.currentStreak), // Use authViewModel
 
                                   const SizedBox(height: 24),
 
