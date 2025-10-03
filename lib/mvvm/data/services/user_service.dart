@@ -10,6 +10,15 @@ class UserService {
         email: email,
         password: password,
       );
+
+      // If users sign in was valid, update last login time
+      if (credential.user != null) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(credential.user!.uid)
+            .update({'lastLogin': Timestamp.fromDate(DateTime.now())});
+      }
+
       return credential.user;
     } catch (e) {
       return null;

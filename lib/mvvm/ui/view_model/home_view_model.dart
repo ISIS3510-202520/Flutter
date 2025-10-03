@@ -41,11 +41,6 @@ class HomeViewModel extends ChangeNotifier {
     );
   }
 
-  // void onTapRegisterMood(BuildContext context) {
-  //   // Navega a la vista existente de IdentifyEmotions
-  //   Navigator.of(context).pushNamed('/identify');
-  // }
-
   void onTapExercises(BuildContext context) {
     // Aún no hay pantalla -> placeholder
     ScaffoldMessenger.of(context).showSnackBar(
