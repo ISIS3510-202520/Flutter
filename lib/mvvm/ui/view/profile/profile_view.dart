@@ -46,12 +46,12 @@ class ProfileView extends StatelessWidget {
                         backgroundImage:
                             (vm.photoUrl != null) ? NetworkImage(vm.photoUrl!) : null,
                         child: (vm.photoUrl == null)
-                            ? Icon(Icons.person, size: 56, color: Colors.black.withOpacity(0.8))
+                            ? Icon(Icons.person, size: 56, color: Colors.black.withValues(alpha: 0.8))
                             : null,
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        vm.displayName,
+                        vm.displayName ?? 'Loading...',
                         style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w500),
                       ),
                     ],

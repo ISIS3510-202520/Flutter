@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:here4u/core/utils/validators.dart';
+import 'package:here4u/mvvm/ui/view/auth/auth_view.dart';
 import 'package:provider/provider.dart';
 import 'package:here4u/mvvm/ui/view_model/register_view_model.dart';
 import 'package:here4u/mvvm/ui/widgets/buttons/rounded_button.dart';
@@ -39,7 +40,10 @@ class _RegisterViewState extends State<RegisterView> {
         context,
         'Please check your email to verify your account.',
       );
-      if (mounted) Navigator.pop(context);
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const AuthView()),
+        (_) => false,
+      );
     } else {
       SnackWarning.show(context, error);
     }

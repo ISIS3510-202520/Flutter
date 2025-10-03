@@ -101,8 +101,11 @@ class _LoginViewState extends State<LoginView> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('Forgot my', style: TextStyle(fontSize: 14)),
+                    Text('Forgot my ', style: TextStyle(fontSize: 14)),
                     TextButton(
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                      ),
                       onPressed: _recoverPassword,
                       child: Text(
                         'password',

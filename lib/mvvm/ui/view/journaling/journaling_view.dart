@@ -93,7 +93,7 @@ class _JournalingContentState extends State<_JournalingContent> {
                 onPressed: () {
                   viewModel.addToJournal(_controller.text);
 
-                  final entry = viewModel.currentEntry;
+                  // final entry = viewModel.currentEntry;
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Entry added to journal!")),
                   );

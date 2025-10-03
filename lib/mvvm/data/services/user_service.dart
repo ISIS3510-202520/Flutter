@@ -16,7 +16,7 @@ class UserService {
     }
   }
 
-  Future<User?> registerWithEmail(String email, String password, String name) async {
+  Future<User?> registerWithEmail(String email, String password, String displayName) async {
     try {
       final existing = await FirebaseFirestore.instance
           .collection('users')
@@ -33,15 +33,20 @@ class UserService {
       if (user != null) {
         final userEntity = UserEntity(
           id: user.uid,
-          name: name,
           email: email,
+          displayName: displayName,
+          createdAt: DateTime.now(),
+          lastLogin: DateTime.now(),
+          currentStreak: 0,
+          longestStreak: 0,
+          lastEntryDate: DateTime.now(),
         );
         await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
             .set(userEntity.toJson());
         await user.sendEmailVerification();
-        await user.updateDisplayName(name);
+        await user.updateDisplayName(displayName);
         return user;
       } else {
         return null;

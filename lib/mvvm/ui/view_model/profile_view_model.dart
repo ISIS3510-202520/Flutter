@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:here4u/mvvm/ui/view/auth/login_view.dart';
+import 'package:here4u/mvvm/ui/view/auth/auth_view.dart';
 
 class ProfileViewModel extends ChangeNotifier {
   // Datos mínimos para pintar la pantalla
-  final String displayName;
-  final String? photoUrl;
+  String? displayName;
+  String? photoUrl;
 
   ProfileViewModel({
-    this.displayName = 'Jane Doe',
+    this.displayName,
     this.photoUrl,
   });
 
   // Si luego necesitas cargar datos remotos:
   Future<void> init() async {
     // TODO: cargar foto/nombre desde tu fuente (Firebase, API, etc.)
+    // Cargar nombre de Firebase Auth
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      displayName = user.displayName ?? 'Error loading name';
+    }
+    notifyListeners();
   }
 
   // Navegaciones aún no implementadas (las vistas no existen)
@@ -38,12 +44,11 @@ class ProfileViewModel extends ChangeNotifier {
     FirebaseAuth.instance.signOut();
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Sesión cerrada')),
+      const SnackBar(content: Text('Signed out')),
     );
 
-    
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const LoginView()),
+      MaterialPageRoute(builder: (_) => const AuthView()),
       (_) => false,
     );
   }
