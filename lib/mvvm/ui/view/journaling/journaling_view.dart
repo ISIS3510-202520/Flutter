@@ -113,9 +113,13 @@ class _JournalingContentState extends State<_JournalingContent> {
 
                           _controller.clear();
 
-                          navigator.pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (_) => const AuthView()),
-                            (_) => false,
+                          navigator.pushReplacement(
+                            MaterialPageRoute(
+                              builder: (_) => ChangeNotifierProvider(
+                                create: (_) => HomeViewModel(),
+                                child: const HomeView(),
+                              ),
+                            ),
                           );
                         } else if (mounted) {
                           scaffoldMessenger.showSnackBar(
