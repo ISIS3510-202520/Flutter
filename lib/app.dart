@@ -4,8 +4,24 @@ import 'package:here4u/mvvm/ui/view/auth/auth_view.dart';
 import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
 import 'package:provider/provider.dart';
 
-class App extends StatelessWidget {
-  const App({super.key});
+class App extends StatefulWidget {
+  final VoidCallback? onAppReady;
+  
+  const App({super.key, this.onAppReady});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  @override
+  void initState() {
+    super.initState();
+    // Call onAppReady after the first frame is rendered
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.onAppReady?.call();
+    });
+  }
 
   // This widget is the root of your application.
   @override
