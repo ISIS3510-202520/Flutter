@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:here4u/mvvm/ui/view/Identify_emotions/identify_emotions_view.dart';
 import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
@@ -25,17 +24,18 @@ class _HomeViewState extends State<HomeView> {
   static const double emergencyW = 260.0;
   
   void _identifyEmotions() {
-    final userId = FirebaseAuth.instance.currentUser?.uid ?? "guest";
+    final authViewModel = context.read<AuthViewModel>();
+    
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ChangeNotifierProvider(
-          create: (_) => IdentifyEmotionsViewModel(userId: userId),
+          create: (_) => IdentifyEmotionsViewModel(userId: authViewModel.currentUser?.uid ?? "guest"),
           child: IdentifyEmotionsView(),
         ),
       ),
     );
-}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +92,7 @@ class _HomeViewState extends State<HomeView> {
                                   SizedBox(
                                     width: buttonW,
                                     child: RoundedButton(
-                                      text: "Register Mood",
+                                      text: viewModel.getMoodButtonText(),
                                       onPressed: _identifyEmotions,
                                       isBold: true,
                                       color: const Color(0xFF86D9F0),

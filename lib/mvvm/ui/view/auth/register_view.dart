@@ -6,6 +6,7 @@ import 'package:here4u/mvvm/ui/view_model/register_view_model.dart';
 import 'package:here4u/mvvm/ui/widgets/buttons/rounded_button.dart';
 import 'package:here4u/mvvm/ui/widgets/inputs/rounded_textbox.dart';
 import 'package:here4u/mvvm/ui/widgets/warnings/snack_warning.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -28,6 +29,9 @@ class _RegisterViewState extends State<RegisterView> {
       builder: (_) => const Center(child: CircularProgressIndicator()),
     );
 
+    final trace = FirebasePerformance.instance.newTrace("app_flutter_register");
+    await trace.start();
+
     final email = _emailController.text;
     final password = _passwordController.text;
     final name = _nameController.text;
@@ -36,6 +40,7 @@ class _RegisterViewState extends State<RegisterView> {
     if (!mounted) return;
     Navigator.of(context).pop(); // Remove loading dialog
     if (error == null) {
+      await trace.stop();
       SnackWarning.show(
         context,
         'Please check your email to verify your account.',

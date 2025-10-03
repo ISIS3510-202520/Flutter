@@ -25,6 +25,7 @@ class RoundedButton extends StatelessWidget {
     final buttonChild = icon == null
         ? Text(
             text,
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
               color: textColor,
@@ -36,12 +37,15 @@ class RoundedButton extends StatelessWidget {
             children: [
               Icon(icon, color: textColor),
               const SizedBox(width: 8),
-              Text(
-                text,
-                style: TextStyle(
-                  fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-                  color: textColor,
-                  fontSize: 16,
+              Flexible(
+                child: Text(
+                  text,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+                    color: textColor,
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ],

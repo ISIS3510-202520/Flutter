@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:here4u/mvvm/ui/view/auth/auth_view.dart';
 import 'package:here4u/mvvm/ui/view/home/home_view.dart';
 import 'package:here4u/mvvm/ui/view_model/home_view_model.dart';
 import 'package:here4u/mvvm/ui/view_model/journaling_view_model.dart';
