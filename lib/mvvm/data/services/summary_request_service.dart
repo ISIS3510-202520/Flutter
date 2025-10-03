@@ -90,4 +90,22 @@ Instructions:
 
     await docRef.update({"id": docRef.id});
   }
+
+  Future<SummaryRequest?> querySummaryForDate(String userId, DateTime date) async {
+  final startOfDay = DateTime.utc(date.year, date.month, date.day);
+  final endOfDay = startOfDay.add(const Duration(days: 1));
+
+  final snapshot = await FirebaseFirestore.instance
+      .collection("SummaryRequests")
+      .where("userId", isEqualTo: userId)
+      .where("generatedAt", isGreaterThanOrEqualTo: startOfDay)
+      .where("generatedAt", isLessThan: endOfDay)
+      .limit(1)
+      .get();
+
+  if (snapshot.docs.isEmpty) return null;
+
+  final doc = snapshot.docs.first;
+  return SummaryRequest.fromMap(doc.id, doc.data());
+}
 }

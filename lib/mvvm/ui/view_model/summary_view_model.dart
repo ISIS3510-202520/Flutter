@@ -22,7 +22,14 @@ class SummaryViewModel extends ChangeNotifier {
       startDate: now.subtract(const Duration(days: 7)),
       endDate: now,
     );
-    final journals = await JournalRepository(JournalService())
+
+    final existingSummary = await _repo.getSummaryForDate(userId, request.endDate);
+
+    if (existingSummary != null) {
+    // Reuse existing one
+      _req = existingSummary;
+    }
+    else{final journals = await JournalRepository(JournalService())
       .getJournalsInRange(userId, request.startDate, request.endDate);
 
     // En el futuro, el commonFeeling puede venir del pipeline también.
@@ -30,7 +37,9 @@ class SummaryViewModel extends ChangeNotifier {
 
     _req = await _repo.generateFromRequest(request, journals);
     _repo.saveSummary(_req!);
+    }
     notifyListeners();
+    
   }
 
   // ==================== Parsing helpers ====================

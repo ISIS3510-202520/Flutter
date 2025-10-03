@@ -19,4 +19,10 @@ class SummaryRequestRepository {
   // Future<SummaryRequest> generateLocalDemo() {
   //   return _service.generateLocalDemo();
   // }
+
+  Future<SummaryRequest?> getSummaryForDate(String userId, DateTime date) async {
+  final snapshot = await _service.querySummaryForDate(userId, date);
+  if (snapshot == null) return null;
+  return snapshot;
+}
 }

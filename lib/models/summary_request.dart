@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 /// SummaryRequest (según UML):
 /// id          : string
 /// userId      : string
@@ -67,19 +69,19 @@ class SummaryRequest {
   }
 
   factory SummaryRequest.fromMap(String id, Map<String, dynamic> map) {
-    return SummaryRequest(
-      id: id,
-      userId: map["userId"] ?? "",
-      startDate: map["startDate"] != null
-          ? DateTime.parse(map["startDate"])
-          : DateTime.now(),
-      endDate: map["endDate"] != null
-          ? DateTime.parse(map["endDate"])
-          : DateTime.now(),
-      generatedAt: map["generatedAt"] != null
-          ? DateTime.parse(map["generatedAt"])
-          : null,
-      summaryText: map["summaryText"] ?? "",
-    );
-  }
+  return SummaryRequest(
+    id: id,
+    userId: map["userId"] ?? "",
+    startDate: map["startDate"] != null
+        ? (map["startDate"] as Timestamp).toDate()
+        : DateTime.now(),
+    endDate: map["endDate"] != null
+        ? (map["endDate"] as Timestamp).toDate()
+        : DateTime.now(),
+    generatedAt: map["generatedAt"] != null
+        ? (map["generatedAt"] as Timestamp).toDate()
+        : null,
+    summaryText: map["summaryText"] ?? "",
+  );
+}
 }
