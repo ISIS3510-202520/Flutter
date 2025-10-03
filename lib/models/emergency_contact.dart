@@ -15,6 +15,7 @@ class EmergencyContact {
     required this.relation,
   });
 
+// Convert EmergencyContact → Map(String, dynamic) for Firestore
   Map<String, dynamic> toMap() {
   return {
     'id': id,
@@ -25,6 +26,22 @@ class EmergencyContact {
     'relation': relation,
   };
   }
+
+  // Convert Firestore Map → EmergencyContact
+  factory EmergencyContact.fromMap(String id, Map<String, dynamic> map) {
+    return EmergencyContact(
+      id: id,
+      userId: map['userId'] ?? '',
+      name: map['name'] ?? '',
+      phone: map['phone'] ?? '',
+      email: map['email'] ?? '',
+      relation: map['relation'] ?? '',
+    );
+  }
+  
 }
+
+
+
 
 

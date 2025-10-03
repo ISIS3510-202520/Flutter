@@ -13,5 +13,16 @@ class EmergencyContactService {
     await docRef.update({"id": docRef.id});
   }
 
+  Future<List<EmergencyContact>> getContacts(String userId) async {
+    final snapshot = await _firestore
+        .collection("EmergencyContact")
+        .where("userId", isEqualTo: userId)
+        .get();
+
+    return snapshot.docs
+        .map((doc) => EmergencyContact.fromMap(doc.id, doc.data()))
+        .toList();
+  }
+
 
 }

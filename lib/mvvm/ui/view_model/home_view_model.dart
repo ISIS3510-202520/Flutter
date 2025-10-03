@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:here4u/models/emergency_contact.dart';
+import 'package:here4u/mvvm/data/repository/emergency_contact_repository.dart';
+import 'package:here4u/mvvm/data/services/emergency_contact_service.dart';
 import 'package:here4u/mvvm/ui/view/emergency/emergency_view.dart';
 import 'package:here4u/mvvm/ui/view_model/emergency_view_model.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +10,8 @@ import 'package:here4u/mvvm/ui/view_model/profile_view_model.dart';
 import 'auth_view_model.dart';
 
 class HomeViewModel extends ChangeNotifier {
+  final _repository = EmergencyContactRepository(EmergencyContactService());
+
 
   String getMoodButtonText() {
     final now = DateTime.now();
@@ -45,11 +50,15 @@ class HomeViewModel extends ChangeNotifier {
     );
   }
 
-  void onTapEmergency(BuildContext context) {
+  Future<void> onTapEmergency(BuildContext context) async {
+    AuthViewModel authViewModel = context.read<AuthViewModel>();
+    final uId = authViewModel.currentUser?.uid;
+    List<EmergencyContact> contacts = await _repository.getContacts(uId!);
+
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => ChangeNotifierProvider(
-          create: (_) => EmergencyViewModel(), // Remove ..init() call
+          create: (_) => EmergencyViewModel(contacts:contacts ), // Remove ..init() call
           child: const EmergencyView(),
         ),
       ),
