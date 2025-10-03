@@ -108,7 +108,7 @@ class ProfileView extends StatelessWidget {
                                     child: RoundedButton(
                                       text: "Sign Out",
                                       onPressed: () => vm.onTapSignOut(context),
-                                      isBold: false,
+                                      isBold: true,
                                       color: const Color(0xFF7CB4C3), // azul medio
                                       textColor: Colors.black,
                                       icon: Icons.logout,

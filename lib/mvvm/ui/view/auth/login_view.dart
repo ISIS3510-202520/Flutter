@@ -24,6 +24,7 @@ class _LoginViewState extends State<LoginView> {
 
   void _login() async {
     final viewModel = context.read<LoginViewModel>();
+    await viewModel.refreshEmailVerification(context);
     final result = await viewModel.login(
       _emailController.text,
       _passwordController.text,

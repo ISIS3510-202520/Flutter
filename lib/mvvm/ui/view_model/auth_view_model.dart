@@ -192,4 +192,14 @@ class AuthViewModel extends ChangeNotifier {
       rethrow;
     }
   }
+
+  Future<void> refreshEmailVerification() async {
+    if (_currentUser != null) {
+      debugPrint('[AuthViewModel] Refreshing email verification status...');
+      await _currentUser!.reload();
+      _currentUser = _auth.currentUser;
+      debugPrint('[AuthViewModel] Email verified after refresh: ${_currentUser?.emailVerified}');
+      notifyListeners();
+    }
+  }
 }

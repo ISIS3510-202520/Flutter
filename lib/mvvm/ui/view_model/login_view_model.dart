@@ -22,4 +22,9 @@ class LoginViewModel extends ChangeNotifier {
     }
     return 'No user to send verification to';
   }
+
+  Future<void> refreshEmailVerification(BuildContext context) async {
+    final authViewModel = context.read<AuthViewModel>();
+    await authViewModel.refreshEmailVerification();
+  }
 }
