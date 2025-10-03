@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:here4u/mvvm/ui/view_model/emergency_view_model.dart';
 import 'package:here4u/mvvm/ui/widgets/buttons/rounded_button.dart';
@@ -90,7 +91,7 @@ class EmergencyView extends StatelessWidget {
                         builder: (_) => MultiProvider(
                           providers: [
                             // VM del formulario
-                            ChangeNotifierProvider(create: (_) => AddEmergencyContactViewModel()),
+                            ChangeNotifierProvider(create: (_) => AddEmergencyContactViewModel(authViewModel: context.read<AuthViewModel>())),
                             // 👉 Reinyecta la misma instancia de EmergencyViewModel en el nuevo route
                             ChangeNotifierProvider.value(value: emergencyVm),
 

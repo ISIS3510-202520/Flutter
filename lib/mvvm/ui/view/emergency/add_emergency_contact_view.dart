@@ -45,7 +45,19 @@ class AddEmergencyContactView extends StatelessWidget {
                     text: "add",
                     icon: Icons.person_add,
                     onPressed: () {
-                      final newContact = vm.createContact("me"); // TODO: userId real
+                      if (vm.nameController.text.isEmpty ||
+                        vm.relationController.text.isEmpty ||
+                        vm.phoneController.text.isEmpty ||
+                        vm.emailController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Please fill in all fields'),
+                          duration: Duration(seconds: 2),
+                        ),
+                        );
+                        return;
+                      } 
+                      final newContact = vm.createContact(); // TODO: userId real
                       emergencyVm.addContact(newContact);
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
