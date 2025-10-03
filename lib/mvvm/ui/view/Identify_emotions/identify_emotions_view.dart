@@ -40,7 +40,6 @@ class IdentifyEmotionsView extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) => JournalingView(
                         emotion: viewModel.selectedEmotion!,
-                        userId: viewModel.userId
                       ),
                     ),
                   );

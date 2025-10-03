@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:here4u/mvvm/data/services/user_service.dart';
+import 'package:provider/provider.dart';
+import 'auth_view_model.dart';
 
 class LoginViewModel extends ChangeNotifier {
-  final UserService _userService = UserService();
+  Future<String?> login(String email, String password, BuildContext context) async {
+    final authViewModel = context.read<AuthViewModel>();
+    return await authViewModel.signInWithEmail(email, password);
+  }
 
-  // Actions UI
-  Future<String?> login(String email, String password) async {
-    final user = await _userService.signInWithEmail(email, password);
-    if (user == null) return 'Invalid email or password.';
-    if (!user.emailVerified) {
+  Future<String?> sendEmailVerification(BuildContext context) async {
+    final authViewModel = context.read<AuthViewModel>();
+    final user = authViewModel.currentUser;
+    
+    if (user != null && !user.emailVerified) {
       try {
         await user.sendEmailVerification();
-        return 'Please verify your email. A new verification email has been sent.';
+        return null;
       } catch (e) {
-        return 'Please verify your email. A new verification email has been sent.';
+        return 'Error sending verification email: ${e.toString()}';
       }
     }
-    // Proceed with login (return null or success)
-    return null;
+    return 'No user to send verification to';
   }
 }

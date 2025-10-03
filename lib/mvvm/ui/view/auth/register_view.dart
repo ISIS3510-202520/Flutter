@@ -32,7 +32,7 @@ class _RegisterViewState extends State<RegisterView> {
     final password = _passwordController.text;
     final name = _nameController.text;
     final viewModel = context.read<RegisterViewModel>();
-    final error = await viewModel.registerWithEmail(email, password, name);
+    final error = await viewModel.registerWithEmail(email, password, name, context);
     if (!mounted) return;
     Navigator.of(context).pop(); // Remove loading dialog
     if (error == null) {

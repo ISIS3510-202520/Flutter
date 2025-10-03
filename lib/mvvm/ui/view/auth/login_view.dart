@@ -27,6 +27,7 @@ class _LoginViewState extends State<LoginView> {
     final result = await viewModel.login(
       _emailController.text,
       _passwordController.text,
+      context,
     );
     if (result != null && mounted) {
       SnackWarning.show(context, result);

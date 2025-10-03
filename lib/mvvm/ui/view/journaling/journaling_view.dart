@@ -7,14 +7,13 @@ import 'package:provider/provider.dart';
 
 class JournalingView extends StatelessWidget {
   final Emotion emotion;
-  final String userId;
 
-  const JournalingView({super.key, required this.emotion, required this.userId});
+  const JournalingView({super.key, required this.emotion});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => JournalingViewModel(emotion: emotion, userId: userId),
+      create: (_) => JournalingViewModel(emotion: emotion),
       child: _JournalingContent(emotion: emotion),
     );
   }
@@ -91,7 +90,7 @@ class _JournalingContentState extends State<_JournalingContent> {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  viewModel.addToJournal(_controller.text);
+                  viewModel.addToJournal(_controller.text, context);
 
                   // final entry = viewModel.currentEntry;
                   ScaffoldMessenger.of(context).showSnackBar(

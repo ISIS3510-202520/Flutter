@@ -1,50 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:here4u/mvvm/ui/view/auth/auth_view.dart';
+import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
+import 'package:provider/provider.dart';
 
 class ProfileViewModel extends ChangeNotifier {
-  // Datos mínimos para pintar la pantalla
-  String? displayName;
-  String? photoUrl;
+  // Remove local data storage since we'll get it from AuthViewModel
+  
+  ProfileViewModel();
 
-  ProfileViewModel({
-    this.displayName,
-    this.photoUrl,
-  });
+  // Remove init() method - no longer needed since AuthViewModel handles data loading
 
-  // Si luego necesitas cargar datos remotos:
-  Future<void> init() async {
-    // TODO: cargar foto/nombre desde tu fuente (Firebase, API, etc.)
-    // Cargar nombre de Firebase Auth
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      displayName = user.displayName ?? 'Error loading name';
-    }
-    notifyListeners();
+  // Get data from global AuthViewModel instead
+  String getDisplayName(BuildContext context) {
+    final authViewModel = context.read<AuthViewModel>();
+    return authViewModel.displayName;
   }
 
-  // Navegaciones aún no implementadas (las vistas no existen)
+  String getEmail(BuildContext context) {
+    final authViewModel = context.read<AuthViewModel>();
+    return authViewModel.currentUser?.email ?? 'No email';
+  }
+
+  // Navigation methods remain the same
   void onTapSummaries(BuildContext context) {
-    // TODO: navegar a Summaries cuando exista
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Summaries: próximamente')),
+      const SnackBar(content: Text('Summaries: soon!')),
     );
   }
 
   void onTapJournal(BuildContext context) {
-    // TODO: navegar a Journal cuando exista
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Journal: próximamente')),
+      const SnackBar(content: Text('Journal: soon!')),
     );
   }
 
-  // Cerrar sesión (por ahora solo feedback visual)
   Future<void> onTapSignOut(BuildContext context) async {
+    final authViewModel = context.read<AuthViewModel>();
+    await authViewModel.signOut();
     
-    FirebaseAuth.instance.signOut();
-
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Signed out')),
+      const SnackBar(content: Text('Signed out successfully!')),
     );
 
     Navigator.of(context).pushAndRemoveUntil(
