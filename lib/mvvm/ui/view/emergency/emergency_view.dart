@@ -84,7 +84,7 @@ class EmergencyView extends StatelessWidget {
                   // Add contact
                   RoundedButton(
                     text: "Add Contact",
-                    color: Colors.pink[200]!,
+                    color: const Color(0xFF8CC0CF),
                     textColor: Colors.black,
                     onPressed: () => vm.startAddContactFlow(context),
                     icon: Icons.add,
@@ -96,8 +96,8 @@ class EmergencyView extends StatelessWidget {
                   // Notify All button
                   RoundedButton(
                     text: "Notify All",
-                    color: Colors.red[400]!,
-                    textColor: Colors.white,
+                    color: const Color(0xFFFFDBD2),
+                    textColor: Colors.black,
                     onPressed: () => vm.notifyAllContacts(context),
                     icon: Icons.notifications_active,
                     width: 200,
