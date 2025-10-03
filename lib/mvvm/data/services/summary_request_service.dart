@@ -17,9 +17,9 @@ class SummaryRequestService {
   ) async {
     final now = DateTime.now();
     final journalTexts = journals.map((j) => j.description).join("\n");
-
+  
     final prompt = '''
-You are an analyst writing a SINGLE, short, actionable summary text (max. ~180-220 words) that combines:
+You are a therapist writing a SINGLE, short, actionable summary text (max. ~180-220 words) that combines:
 - Highlights (key points) and
 - Insights (interpretations/suggested actions)
 in a SINGLE output field.

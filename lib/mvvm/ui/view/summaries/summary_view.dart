@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
 import 'package:provider/provider.dart';
 
 import 'package:here4u/mvvm/ui/view_model/summary_view_model.dart';
@@ -8,11 +9,19 @@ class SummaryView extends StatelessWidget {
   const SummaryView({super.key});
 
   static Widget route() {
-    return ChangeNotifierProvider(
-      create: (_) => SummaryViewModel()..init(),
-      child: const SummaryView(),
-    );
-  }
+  return Builder(
+    builder: (context) {
+      final authVm = context.read<AuthViewModel>();
+      final userId = authVm.userEntity?.id ?? 'me'; // fallback if null
+
+      return ChangeNotifierProvider(
+        create: (_) => SummaryViewModel()..init(userId: userId),
+        child: const SummaryView(),
+      );
+    },
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {

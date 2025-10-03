@@ -14,7 +14,7 @@ class SummaryViewModel extends ChangeNotifier {
   SummaryViewModel({SummaryRequestRepository? repository})
       : _repo = repository ?? SummaryRequestRepository(SummaryRequestService());
 
-  Future<void> init({String userId = 'me'}) async {
+  Future<void> init({required String userId}) async {
     final now = DateTime.now();
     
     final request = SummaryRequest.create(

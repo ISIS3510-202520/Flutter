@@ -1,5 +1,7 @@
 
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Journal {
   final String id;                  // Firestore document ID
   final String userId;              // Firebase user UID
@@ -40,7 +42,7 @@ class Journal {
       "userId": userId,
       "emotionId": emotionId,
       "description": description,
-      "createdAt": createdAt.toIso8601String(),
+      "createdAt": createdAt,
       "sharedWithTherapist": sharedWithTherapist,
     };
   }
@@ -52,9 +54,9 @@ class Journal {
       userId: map["userId"] ?? "",
       emotionId: map["emotionId"] ?? "",
       description: map["description"] ?? "",
-      createdAt: map["createdAt"] != null
-          ? DateTime.parse(map["createdAt"])
-          : DateTime.now(),
+      createdAt: map["createdAt"] is Timestamp
+          ? (map["createdAt"] as Timestamp).toDate()
+        : DateTime.now(),
       sharedWithTherapist: map["sharedWithTherapist"] ?? false,
     );
   }
