@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:here4u/mvvm/ui/view/emergency/emergency_view.dart';
+import 'package:here4u/mvvm/ui/view_model/emergency_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:here4u/mvvm/ui/view/profile/profile_view.dart';
 import 'package:here4u/mvvm/ui/view_model/profile_view_model.dart';
@@ -44,8 +46,13 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   void onTapEmergency(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Emergency: soon!")),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ChangeNotifierProvider(
+          create: (_) => EmergencyViewModel(), // Remove ..init() call
+          child: const EmergencyView(),
+        ),
+      ),
     );
   }
 
