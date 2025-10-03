@@ -1,5 +1,6 @@
 // lib/services/summary_request_service.dart
 import 'dart:convert';
+import 'package:here4u/models/journal.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -12,8 +13,10 @@ class SummaryRequestService {
 
   Future<SummaryRequest> generateFromRequest(
     SummaryRequest request,
+    List<Journal> journals,
   ) async {
     final now = DateTime.now();
+    final journalTexts = journals.map((j) => j.description).join("\n");
 
     final prompt = '''
 You are an analyst writing a SINGLE, short, actionable summary text (max. ~180-220 words) that combines:
@@ -21,9 +24,7 @@ You are an analyst writing a SINGLE, short, actionable summary text (max. ~180-2
 - Insights (interpretations/suggested actions)
 in a SINGLE output field.
 
-User context:
-- emotionId: happy
-- description: llumi
+$journalTexts
 
 Instructions:
 - Return only the final text (no titles like "Highlights" or "Insights").

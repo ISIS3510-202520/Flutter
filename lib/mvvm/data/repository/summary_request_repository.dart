@@ -1,3 +1,4 @@
+import 'package:here4u/models/journal.dart';
 import 'package:here4u/models/summary_request.dart';
 import 'package:here4u/mvvm/data/services/summary_request_service.dart';
 
@@ -7,8 +8,8 @@ class SummaryRequestRepository {
 
   SummaryRequestRepository(this._service);
 
-  Future<SummaryRequest> generateFromRequest(SummaryRequest request) {
-    return _service.generateFromRequest(request);
+  Future<SummaryRequest> generateFromRequest(SummaryRequest request, List<Journal> journals) {
+    return _service.generateFromRequest(request, journals);
   }
 
   // Future<SummaryRequest> generateLocalDemo() {
