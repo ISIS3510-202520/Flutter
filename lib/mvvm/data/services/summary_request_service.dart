@@ -1,5 +1,6 @@
 // lib/services/summary_request_service.dart
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:here4u/models/journal.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -10,6 +11,7 @@ import 'package:here4u/models/summary_request.dart';
 class SummaryRequestService {
   final String _openAIBase = "https://api.openai.com/v1";
   final String _model = "gpt-4o-mini"; // ajusta si usas otro modelo
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<SummaryRequest> generateFromRequest(
     SummaryRequest request,
@@ -79,5 +81,13 @@ Instructions:
       generatedAt: now,
       summaryText: combinedText,
     );
+  }
+
+  Future<void> saveSummary(SummaryRequest summary) async {
+    final docRef = await _firestore
+        .collection("SummaryRequests")  
+        .add(summary.toMap());
+
+    await docRef.update({"id": docRef.id});
   }
 }

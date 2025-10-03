@@ -12,6 +12,10 @@ class SummaryRequestRepository {
     return _service.generateFromRequest(request, journals);
   }
 
+  Future<void> saveSummary(SummaryRequest summary) {
+    return _service.saveSummary(summary);
+  }
+
   // Future<SummaryRequest> generateLocalDemo() {
   //   return _service.generateLocalDemo();
   // }

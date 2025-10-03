@@ -59,9 +59,9 @@ class SummaryRequest {
   Map<String, dynamic> toMap() {
     return {
       "userId": userId,
-      "startDate": startDate.toIso8601String(),
-      "endDate": endDate.toIso8601String(),
-      "generatedAt": generatedAt?.toIso8601String(),
+      "startDate": startDate,
+      "endDate": endDate,
+      "generatedAt": generatedAt,
       "summaryText": summaryText,
     };
   }

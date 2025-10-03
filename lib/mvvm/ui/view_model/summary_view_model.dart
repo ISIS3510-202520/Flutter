@@ -29,6 +29,7 @@ class SummaryViewModel extends ChangeNotifier {
     commonFeeling = '';
 
     _req = await _repo.generateFromRequest(request, journals);
+    _repo.saveSummary(_req!);
     notifyListeners();
   }
 
