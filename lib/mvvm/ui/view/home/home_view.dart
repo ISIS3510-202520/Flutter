@@ -92,7 +92,7 @@ class _HomeViewState extends State<HomeView> {
                                   SizedBox(
                                     width: buttonW,
                                     child: RoundedButton(
-                                      text: "Register Mood",
+                                      text: viewModel.getMoodButtonText(),
                                       onPressed: _identifyEmotions,
                                       isBold: true,
                                       color: const Color(0xFF86D9F0),
