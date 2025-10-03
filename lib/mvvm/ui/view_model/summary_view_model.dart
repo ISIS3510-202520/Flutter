@@ -29,31 +29,8 @@ class SummaryViewModel extends ChangeNotifier {
 
   // ==================== Parsing helpers ====================
 
-  String get summaryText => _req?.summaryText ?? '';
+  String get summaryText => _req?.summaryText ?? 'Loading...';
 
-  /// Extrae el bloque "Highlights:" del summaryText (si existe).
-  String get highlights {
-    return _extractSection(summaryText, 'Highlights');
-  }
-
-  /// Extrae el bloque "Insights:" del summaryText (si existe).
-  String get insights {
-    return _extractSection(summaryText, 'Insights');
-  }
-
-  /// Busca una sección con encabezado seguido de texto hasta el siguiente encabezado o fin.
-  String _extractSection(String text, String header) {
-    final pattern = RegExp(
-      r'(^|\n)' + RegExp.escape(header) + r':\s*\n([\s\S]*?)(?=\n[A-Za-z ]+:\s*\n|$)',
-      multiLine: true,
-    );
-    final match = pattern.firstMatch(text);
-    if (match != null && match.groupCount >= 2) {
-      return match.group(2)!.trim();
-    }
-    // Fallback: si no existe el header, retorna todo el texto
-    return text.trim().isEmpty ? '[no data]' : text.trim();
-  }
 
   void onTapBack(BuildContext context) => Navigator.of(context).pop();
 }

@@ -11,7 +11,7 @@ class SummaryRequestRepository {
     return _service.generateFromRequest(request);
   }
 
-  Future<SummaryRequest> generateLocalDemo() {
-    return _service.generateLocalDemo();
-  }
+  // Future<SummaryRequest> generateLocalDemo() {
+  //   return _service.generateLocalDemo();
+  // }
 }
