@@ -96,12 +96,16 @@ class _JournalingContentState extends State<_JournalingContent> {
                           return;
                         }
 
+                        // Store context references before async call
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
+                        final navigator = Navigator.of(context);
+
                         final success = await viewModel.saveJournal(
                           _controller.text.trim(),
                         );
 
                         if (success && mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          scaffoldMessenger.showSnackBar(
                             const SnackBar(
                               content: Text("Entry added to journal!"),
                               backgroundColor: Colors.green,
@@ -110,8 +114,7 @@ class _JournalingContentState extends State<_JournalingContent> {
 
                           _controller.clear();
 
-                          Navigator.pushReplacement(
-                            context,
+                          navigator.pushReplacement(
                             MaterialPageRoute(
                               builder: (_) => ChangeNotifierProvider(
                                 create: (_) => HomeViewModel(),
@@ -120,7 +123,7 @@ class _JournalingContentState extends State<_JournalingContent> {
                             ),
                           );
                         } else if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          scaffoldMessenger.showSnackBar(
                             SnackBar(
                               content: Text(
                                 viewModel.errorMessage ??

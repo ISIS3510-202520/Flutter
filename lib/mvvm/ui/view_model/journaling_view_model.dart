@@ -46,9 +46,9 @@ class JournalingViewModel extends ChangeNotifier {
         return false;
       }
 
-      print('[JournalingViewModel] Starting journal save process...');
-      print('[JournalingViewModel] User ID: $userId');
-      print('[JournalingViewModel] Emotion: ${emotion.name} (ID: ${emotion.id})');
+      debugPrint('[JournalingViewModel] Starting journal save process...');
+      debugPrint('[JournalingViewModel] User ID: $userId');
+      debugPrint('[JournalingViewModel] Emotion: ${emotion.name} (ID: ${emotion.id})');
 
       // Create local journal object
       _currentEntry = Journal.create(
@@ -57,86 +57,86 @@ class JournalingViewModel extends ChangeNotifier {
         description: text,
       );
 
-      print('[JournalingViewModel] Created journal entry: ${_currentEntry?.id}');
+      debugPrint('[JournalingViewModel] Created journal entry: ${_currentEntry?.id}');
 
       // Save journal entry
       await _repository.saveJournal(_currentEntry!);
-      print('[JournalingViewModel] Journal entry saved successfully');
+      debugPrint('[JournalingViewModel] Journal entry saved successfully');
 
       // Calculate and update streak
       await _updateStreakAfterEntry();
-      print('[JournalingViewModel] Streak update completed');
+      debugPrint('[JournalingViewModel] Streak update completed');
 
       _isLoading = false;
       notifyListeners();
       
-      print('[JournalingViewModel] Journal entry saved for emotion: ${emotion.name}');
+      debugPrint('[JournalingViewModel] Journal entry saved for emotion: ${emotion.name}');
       return true;
       
     } catch (e) {
       _isLoading = false;
       _errorMessage = 'Failed to save journal: ${e.toString()}';
       notifyListeners();
-      print('[JournalingViewModel] Error saving journal: $e');
-      print('[JournalingViewModel] Stack trace: ${StackTrace.current}');
+      debugPrint('[JournalingViewModel] Error saving journal: $e');
+      debugPrint('[JournalingViewModel] Stack trace: ${StackTrace.current}');
       return false;
     }
   }
 
   Future<void> _updateStreakAfterEntry() async {
     try {
-      print('[JournalingViewModel] Starting streak update...');
+      debugPrint('[JournalingViewModel] Starting streak update...');
       
       // Calculate new streak based on last entry date
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
       
-      print('[JournalingViewModel] Current date: $today');
-      print('[JournalingViewModel] Current streak: ${_authViewModel.currentStreak}');
+      debugPrint('[JournalingViewModel] Current date: $today');
+      debugPrint('[JournalingViewModel] Current streak: ${_authViewModel.currentStreak}');
       
       final lastEntry = _authViewModel.userEntity?.lastEntryDate;
-      print('[JournalingViewModel] Last entry date from auth: $lastEntry');
+      debugPrint('[JournalingViewModel] Last entry date from auth: $lastEntry');
       
       final lastEntryDate = lastEntry != null 
           ? DateTime(lastEntry.year, lastEntry.month, lastEntry.day)
           : null;
 
-      print('[JournalingViewModel] Normalized last entry date: $lastEntryDate');
+      debugPrint('[JournalingViewModel] Normalized last entry date: $lastEntryDate');
 
       int newStreak = _authViewModel.currentStreak;
 
       if (lastEntryDate == null) {
         // First entry ever
         newStreak = 1;
-        print('[JournalingViewModel] First journal entry ever, streak: $newStreak');
+        debugPrint('[JournalingViewModel] First journal entry ever, streak: $newStreak');
       } else if (lastEntryDate.isAtSameMomentAs(today)) {
         // Entry already made today - but if streak is 0, this means it's the first entry of the day
         if (_authViewModel.currentStreak == 0) {
           newStreak = 1;
-          print('[JournalingViewModel] First entry today, setting streak to: $newStreak');
+          debugPrint('[JournalingViewModel] First entry today, setting streak to: $newStreak');
         } else {
-          print('[JournalingViewModel] Journal entry already made today, keeping streak: $newStreak');
+          debugPrint('[JournalingViewModel] Journal entry already made today, keeping streak: $newStreak');
           return; // No need to update if already made entry today and streak > 0
         }
       } else if (lastEntryDate.isAtSameMomentAs(today.subtract(Duration(days: 1)))) {
         // Entry was yesterday, continue streak
         newStreak = _authViewModel.currentStreak + 1;
-        print('[JournalingViewModel] Continuing streak from yesterday: $newStreak');
+        debugPrint('[JournalingViewModel] Continuing streak from yesterday: $newStreak');
       } else {
         // Gap in entries, reset streak
         newStreak = 1;
-        print('[JournalingViewModel] Gap in entries, resetting streak to: $newStreak');
+        debugPrint('[JournalingViewModel] Gap in entries, resetting streak to: $newStreak');
       }
 
       // Update streak and last entry date
-      print('[JournalingViewModel] Updating streak to: $newStreak with date: $today');
+      debugPrint('[JournalingViewModel] Updating streak to: $newStreak with date: $today');
       await _authViewModel.updateStreak(newStreak);
       
-      print('[JournalingViewModel] Streak update completed successfully');
+      debugPrint('[JournalingViewModel] Streak update completed successfully');
       
     } catch (e) {
-      print('[JournalingViewModel] Error updating streak: $e');
-      print('[JournalingViewModel] Stack trace: ${StackTrace.current}');
+      debugPrint('[JournalingViewModel] Error updating streak: $e');
+      debugPrint('[JournalingViewModel] Stack trace: ${StackTrace.current}');
       // Don't throw here, as the journal was already saved successfully
     }
   }

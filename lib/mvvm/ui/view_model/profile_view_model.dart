@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 class ProfileViewModel extends ChangeNotifier {
   // Remove local data storage since we'll get it from AuthViewModel
-  
+
   ProfileViewModel();
 
   // Remove init() method - no longer needed since AuthViewModel handles data loading
@@ -23,28 +23,41 @@ class ProfileViewModel extends ChangeNotifier {
 
   // Navigation methods remain the same
   void onTapSummaries(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Summaries: soon!')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Summaries: soon!')));
   }
 
   void onTapJournal(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Journal: soon!')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Journal: soon!')));
   }
 
   Future<void> onTapSignOut(BuildContext context) async {
     final authViewModel = context.read<AuthViewModel>();
-    await authViewModel.signOut();
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Signed out successfully!')),
-    );
 
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const AuthView()),
-      (_) => false,
-    );
+    try {
+      await authViewModel.signOut();
+
+      // Check if the context is still mounted before using it
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Signed out successfully!')),
+        );
+
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const AuthView()),
+          (_) => false,
+        );
+      }
+    } catch (e) {
+      // Handle any sign-out errors
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Sign out failed: $e')));
+      }
+    }
   }
 }
