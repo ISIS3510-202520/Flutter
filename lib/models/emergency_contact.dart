@@ -14,4 +14,17 @@ class EmergencyContact {
     required this.email,
     required this.relation,
   });
+
+  Map<String, dynamic> toMap() {
+  return {
+    'id': id,
+    'userId': userId,
+    'name': name,
+    'phone': phone,
+    'email': email,
+    'relation': relation,
+  };
+  }
 }
+
+

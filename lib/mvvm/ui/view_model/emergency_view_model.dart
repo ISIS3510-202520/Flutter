@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:here4u/models/emergency_contact.dart';
 
 class EmergencyViewModel extends ChangeNotifier {
+  
   final List<EmergencyContact> _contacts = [
     EmergencyContact(
       id: '1',
