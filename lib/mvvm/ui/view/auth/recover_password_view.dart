@@ -20,7 +20,7 @@ class _RecoverPasswordViewState extends State<RecoverPasswordView> {
   void _recover() async {
     if (!_formKey.currentState!.validate()) return;
     final viewModel = context.read<RecoverPasswordViewModel>();
-    final error = await viewModel.recoverPassword(_emailController.text);
+    final error = await viewModel.recoverPassword(_emailController.text, context);
     if (!mounted) return;
     if (error == null) {
       SnackWarning.show(

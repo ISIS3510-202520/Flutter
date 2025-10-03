@@ -45,3 +45,6 @@ android {
 flutter {
     source = "../.."
 }
+
+apply(plugin = "com.google.firebase.crashlytics")
+apply(plugin = "com.google.firebase.firebase-perf")

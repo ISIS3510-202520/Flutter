@@ -34,7 +34,7 @@ class Journal {
     );
   }
 
-  /// Convert Journal → Map<String, dynamic> for Firestore
+  /// Convert Journal → Map(String, dynamic) for Firestore
   Map<String, dynamic> toMap() {
     return {
       "userId": userId,

@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'auth_view_model.dart';
 
 class RecoverPasswordViewModel extends ChangeNotifier {
-  Future<String?> recoverPassword(String email) async {
-    try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-      return 'Password reset email sent. Please check your inbox.';
-    } catch (e) {
-      return 'Password reset email sent. Please check your inbox.';
-    }
+  Future<String?> recoverPassword(String email, BuildContext context) async {
+    final authViewModel = context.read<AuthViewModel>();
+    return await authViewModel.sendPasswordReset(email);
   }
 }

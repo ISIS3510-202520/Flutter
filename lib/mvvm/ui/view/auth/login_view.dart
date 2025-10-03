@@ -24,9 +24,11 @@ class _LoginViewState extends State<LoginView> {
 
   void _login() async {
     final viewModel = context.read<LoginViewModel>();
+    await viewModel.refreshEmailVerification(context);
     final result = await viewModel.login(
       _emailController.text,
       _passwordController.text,
+      context,
     );
     if (result != null && mounted) {
       SnackWarning.show(context, result);
@@ -101,8 +103,11 @@ class _LoginViewState extends State<LoginView> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('Forgot my', style: TextStyle(fontSize: 14)),
+                    Text('Forgot my ', style: TextStyle(fontSize: 14)),
                     TextButton(
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                      ),
                       onPressed: _recoverPassword,
                       child: Text(
                         'password',
