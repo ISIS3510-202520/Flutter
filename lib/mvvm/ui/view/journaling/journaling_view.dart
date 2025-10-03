@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:here4u/mvvm/ui/view/home/home_view.dart';
-import 'package:here4u/mvvm/ui/view_model/home_view_model.dart';
+import 'package:here4u/mvvm/ui/view/auth/auth_view.dart';
 import 'package:here4u/mvvm/ui/view_model/journaling_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -114,13 +113,9 @@ class _JournalingContentState extends State<_JournalingContent> {
 
                           _controller.clear();
 
-                          navigator.pushReplacement(
-                            MaterialPageRoute(
-                              builder: (_) => ChangeNotifierProvider(
-                                create: (_) => HomeViewModel(),
-                                child: const HomeView(),
-                              ),
-                            ),
+                          navigator.pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (_) => const AuthView()),
+                            (_) => false,
                           );
                         } else if (mounted) {
                           scaffoldMessenger.showSnackBar(
