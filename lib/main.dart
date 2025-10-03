@@ -15,7 +15,7 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Start the startup trace at the very beginning
-  final trace = FirebasePerformance.instance.newTrace("app_startup");
+  final trace = FirebasePerformance.instance.newTrace("app_flutter_startup");
   await trace.start();
 
   try {

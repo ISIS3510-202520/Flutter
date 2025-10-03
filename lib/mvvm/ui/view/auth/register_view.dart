@@ -29,7 +29,7 @@ class _RegisterViewState extends State<RegisterView> {
       builder: (_) => const Center(child: CircularProgressIndicator()),
     );
 
-    final trace = FirebasePerformance.instance.newTrace("app_register");
+    final trace = FirebasePerformance.instance.newTrace("app_flutter_register");
     await trace.start();
 
     final email = _emailController.text;
