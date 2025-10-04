@@ -9,7 +9,7 @@ class App extends StatefulWidget {
   final VoidCallback? onAppReady;
   final FirebaseAnalytics analytics;
 
-  const App({Key? key, required this.analytics, this.onAppReady}) : super(key: key);
+  const App({super.key, required this.analytics, this.onAppReady});
 
   @override
   State<App> createState() => _AppState();
