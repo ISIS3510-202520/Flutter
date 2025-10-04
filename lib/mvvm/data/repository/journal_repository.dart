@@ -22,4 +22,10 @@ class JournalRepository {
       String journalId, bool shared) {
     return _service.updateSharedWithTherapist(journalId, shared);
   }
+
+  Future<List<Journal>> getJournalsInRange(
+    String userId, DateTime startDate, DateTime endDate) {
+  return _service.getJournalsInRange(userId, startDate, endDate);
+}
+
 }

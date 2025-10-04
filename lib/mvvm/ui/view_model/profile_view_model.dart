@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:here4u/mvvm/ui/view/auth/auth_view.dart';
+import 'package:here4u/mvvm/ui/view/summaries/summary_view.dart';
 import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -23,9 +24,9 @@ class ProfileViewModel extends ChangeNotifier {
 
   // Navigation methods remain the same
   void onTapSummaries(BuildContext context) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Summaries: soon!')));
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => SummaryView.route()),
+    );
   }
 
   void onTapJournal(BuildContext context) {
