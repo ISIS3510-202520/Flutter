@@ -46,5 +46,12 @@ flutter {
     source = "../.."
 }
 
-apply(plugin = "com.google.firebase.crashlytics")
-apply(plugin = "com.google.firebase.firebase-perf")
+dependencies {
+    // Firebase BoM to align all versions
+    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
+
+    // Individual Firebase libraries
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-perf")
+    implementation("com.google.firebase:firebase-analytics")
+}

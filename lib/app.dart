@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:here4u/mvvm/ui/view/auth/auth_view.dart';
@@ -6,8 +7,9 @@ import 'package:provider/provider.dart';
 
 class App extends StatefulWidget {
   final VoidCallback? onAppReady;
-  
-  const App({super.key, this.onAppReady});
+  final FirebaseAnalytics analytics;
+
+  const App({Key? key, required this.analytics, this.onAppReady}) : super(key: key);
 
   @override
   State<App> createState() => _AppState();
@@ -29,6 +31,9 @@ class _AppState extends State<App> {
     return ChangeNotifierProvider(
       create: (_) => AuthViewModel(),
       child: MaterialApp(
+        navigatorObservers: [
+          FirebaseAnalyticsObserver(analytics: widget.analytics),
+        ],
         title: 'here4u',
         theme: ThemeData(
           // This is the theme of your application.
