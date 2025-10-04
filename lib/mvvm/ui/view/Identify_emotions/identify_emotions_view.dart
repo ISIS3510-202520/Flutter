@@ -25,8 +25,8 @@ class IdentifyEmotionsView extends StatelessWidget {
           padding: const EdgeInsets.all(40),
           child: Center(
             child: Wrap(
-              spacing: 50,
-              runSpacing: 50,
+              spacing: 30,
+              runSpacing: 30,
               children: _buildEmotionCircles(emotions, viewModel),
             ),
           ),
