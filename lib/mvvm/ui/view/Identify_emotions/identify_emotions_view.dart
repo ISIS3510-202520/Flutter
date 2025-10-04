@@ -22,11 +22,11 @@ class IdentifyEmotionsView extends StatelessWidget {
           overscroll: false,
         ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(40),
+          padding: const EdgeInsets.all(20),
           child: Center(
             child: Wrap(
-              spacing: 50,
-              runSpacing: 50,
+              spacing: 20,
+              runSpacing: 30,
               children: _buildEmotionCircles(emotions, viewModel),
             ),
           ),
@@ -61,7 +61,7 @@ class IdentifyEmotionsView extends StatelessWidget {
     List<Emotion> emotions,
     IdentifyEmotionsViewModel viewModel,
   ) {
-    const double circleSize = 130;
+    const double circleSize = 120;
 
     return emotions.map((emotion) {
       final isSelected = viewModel.selectedEmotion == emotion;
