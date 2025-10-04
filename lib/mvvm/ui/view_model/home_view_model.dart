@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:here4u/models/emergency_contact.dart';
 import 'package:here4u/mvvm/data/repository/emergency_contact_repository.dart';
 import 'package:here4u/mvvm/data/services/emergency_contact_service.dart';
@@ -11,7 +12,7 @@ import 'auth_view_model.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final _repository = EmergencyContactRepository(EmergencyContactService());
-
+  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
 
   String getMoodButtonText() {
     final now = DateTime.now();
@@ -51,18 +52,62 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   Future<void> onTapEmergency(BuildContext context) async {
-    AuthViewModel authViewModel = context.read<AuthViewModel>();
-    final uId = authViewModel.currentUser?.uid;
-    List<EmergencyContact> contacts = await _repository.getContacts(uId!);
+    try {
+      AuthViewModel authViewModel = context.read<AuthViewModel>();
+      final uId = authViewModel.currentUser?.uid;
+      
+      debugPrint('[HomeViewModel] User ID: $uId');
+      
+      List<EmergencyContact> contacts = await _repository.getContacts(uId!);
+      
+      debugPrint('[HomeViewModel] About to log analytics event with ${contacts.length} contacts');
 
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => ChangeNotifierProvider(
-          create: (_) => EmergencyViewModel(contacts:contacts ), // Remove ..init() call
-          child: const EmergencyView(),
+      // Log emergency view access to Firebase Analytics
+      await _analytics.logEvent(
+        name: 'emergency_view_accessed',
+        parameters: {
+          'user_id': uId,
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+          'emergency_contacts_count': contacts.length,
+        },
+      );
+
+      // Log a simple test event to verify analytics is working
+      await _analytics.logEvent(
+        name: 'test_emergency_tap',
+        parameters: {
+          'test': 'working',
+        },
+      );
+
+      debugPrint('[HomeViewModel] Analytics events logged successfully');
+
+      // Log screen view for automatic screen tracking
+      await _analytics.logScreenView(
+        screenName: 'EmergencyView',
+        screenClass: 'EmergencyView',
+      );
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => ChangeNotifierProvider(
+            create: (_) => EmergencyViewModel(contacts: contacts),
+            child: const EmergencyView(),
+          ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      debugPrint('[HomeViewModel] Error accessing emergency view: $e');
+      
+      // Log error to analytics
+      await _analytics.logEvent(
+        name: 'emergency_view_error',
+        parameters: {
+          'error': e.toString(),
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+        },
+      );
+    }
   }
 
   // Add method to update streak via AuthViewModel
