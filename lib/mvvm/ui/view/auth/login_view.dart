@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:here4u/mvvm/ui/view/auth/auth_view.dart';
 import 'package:here4u/mvvm/ui/view/auth/recover_password_view.dart';
 import 'package:here4u/mvvm/ui/view/auth/register_view.dart';
 import 'package:here4u/mvvm/ui/view_model/login_view_model.dart';
@@ -22,26 +21,19 @@ class _LoginViewState extends State<LoginView> {
   final TextEditingController _passwordController = TextEditingController();
   final viewModel = LoginViewModel();
 
-  void _login() async {
+  void _login() {
     final viewModel = context.read<LoginViewModel>();
-    await viewModel.refreshEmailVerification(context);
-    final result = await viewModel.login(
+    viewModel.loginWithCallback(
       _emailController.text,
       _passwordController.text,
       context,
+      (result) {
+        if (result != null) {
+          SnackWarning.show(context, "Invalid credentials!");
+          return;
+        }
+      },
     );
-    if (result != null && mounted) {
-      SnackWarning.show(context, result);
-      return; // Abort login
-    }
-    if (!mounted) return;
-    // Proceed to home via auth_view
-    Navigator.pop(context); // Close login view
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => AuthView()),
-    );
-    return;
   }
 
   void _register() {
