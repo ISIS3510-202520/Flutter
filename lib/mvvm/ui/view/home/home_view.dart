@@ -27,6 +27,7 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     _startTime = DateTime.now();
+    debugPrint("[HomeView] logging screen view");
     FirebaseAnalytics.instance.logScreenView(
       screenName: 'HomeView',
       screenClass: 'HomeView',
@@ -61,6 +62,9 @@ class _HomeViewState extends State<HomeView> {
         ),
       ),
     );
+
+    // Reset start time for next engagement tracking
+    _startTime = DateTime.now();
   }
 
   void _goToProfile(viewModel) {
@@ -76,6 +80,38 @@ class _HomeViewState extends State<HomeView> {
       },
     );
     viewModel.onTapProfile(context);
+    // Reset start time for next engagement tracking
+    _startTime = DateTime.now();
+  }
+
+  void _goToEmergency(HomeViewModel viewModel) {
+    final engagementTime = DateTime.now().difference(_startTime).inMilliseconds;
+    debugPrint('[HomeView] User engagement time: $engagementTime ms');
+    FirebaseAnalytics.instance.logEvent(
+      name: 'screen_engagement_flutter',
+      parameters: {
+        'screen_name': 'HomeView',
+        'engagement_time_msec': engagementTime,
+      },
+    );
+
+    viewModel.onTapEmergency(
+      context,
+      onNavigate: (contacts) {
+        if (!mounted) return;
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => ChangeNotifierProvider(
+              create: (_) => EmergencyViewModel(contacts: contacts),
+              child: const EmergencyView(),
+            ),
+          ),
+        );
+      },
+    );
+
+    // Reset start time for next engagement tracking
+    _startTime = DateTime.now();
   }
 
   @override
@@ -159,20 +195,7 @@ class _HomeViewState extends State<HomeView> {
                                   // Emergency (grande)
                                   EmergencyButton(
                                     width: emergencyW,
-                                    onPressed: () => viewModel.onTapEmergency(
-                                      context,
-                                      onNavigate: (contacts) {
-                                        if (!mounted) return;
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (_) => ChangeNotifierProvider(
-                                              create: (_) => EmergencyViewModel(contacts: contacts),
-                                              child: const EmergencyView(),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                    onPressed: () => _goToEmergency(viewModel),
                                     textStyle: textTheme.titleMedium?.copyWith(
                                       fontWeight: FontWeight.w600,
                                     ),

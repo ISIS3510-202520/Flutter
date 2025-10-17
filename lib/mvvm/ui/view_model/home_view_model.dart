@@ -73,12 +73,7 @@ class HomeViewModel extends ChangeNotifier {
       );
 
       debugPrint('[HomeViewModel] Analytics events logged successfully');
-
-      await _analytics.logScreenView(
-        screenName: 'EmergencyView',
-        screenClass: 'EmergencyView',
-      );
-
+      
       // Use callback for navigation
       onNavigate(contacts);
     } catch (e) {

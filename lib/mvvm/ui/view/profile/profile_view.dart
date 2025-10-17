@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -5,8 +6,23 @@ import 'package:here4u/mvvm/ui/view_model/profile_view_model.dart';
 import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
 import 'package:here4u/mvvm/ui/widgets/buttons/rounded_button.dart';
 
-class ProfileView extends StatelessWidget {
+class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
+
+  @override
+  State<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<ProfileView> {
+  @override
+  void initState() {
+    super.initState();
+    debugPrint("[ProfileView] logging screen view");
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: 'ProfileView',
+      screenClass: 'ProfileView',
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

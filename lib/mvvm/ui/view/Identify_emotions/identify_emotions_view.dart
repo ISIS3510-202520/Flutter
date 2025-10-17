@@ -22,6 +22,7 @@ class _IdentifyEmotionsViewState extends State<IdentifyEmotionsView> with Widget
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _startTime = DateTime.now();
+    debugPrint("[IdentifyEmotionsView] logging screen view");
     FirebaseAnalytics.instance.logScreenView(
       screenName: 'IdentifyEmotionsView',
       screenClass: 'IdentifyEmotionsView',
