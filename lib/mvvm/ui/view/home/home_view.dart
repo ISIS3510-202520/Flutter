@@ -1,9 +1,11 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:here4u/mvvm/ui/view/Identify_emotions/identify_emotions_view.dart';
+import 'package:here4u/mvvm/ui/view/emergency/emergency_view.dart';
 import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
+import 'package:here4u/mvvm/ui/view_model/emergency_view_model.dart';
 import 'package:here4u/mvvm/ui/view_model/identify_emotions_view_model.dart';
 import 'package:provider/provider.dart';
-
 import 'package:here4u/mvvm/ui/view_model/home_view_model.dart';
 import 'package:here4u/mvvm/ui/widgets/buttons/rounded_button.dart';
 
@@ -19,12 +21,36 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 class _HomeViewState extends State<HomeView> {
+  late DateTime _startTime;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTime = DateTime.now();
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: 'HomeView',
+      screenClass: 'HomeView',
+    );
+  }
+  
   // Define button width as a constant
   static const double buttonW = 220.0;
   static const double emergencyW = 260.0;
   
   void _identifyEmotions() {
     final authViewModel = context.read<AuthViewModel>();
+
+    // Log user engagement time before navigating
+    final engagementTime = DateTime.now().difference(_startTime).inMilliseconds;
+    debugPrint('[HomeView] User engagement time: $engagementTime ms');
+    FirebaseAnalytics.instance.logEvent(
+      name: 'screen_engagement_flutter',
+      parameters: {
+        'screen_name': 'HomeView',
+        'engagement_time_msec': engagementTime,
+        // Add any other parameters you want
+      },
+    );
     
     Navigator.push(
       context,
@@ -35,6 +61,21 @@ class _HomeViewState extends State<HomeView> {
         ),
       ),
     );
+  }
+
+  void _goToProfile(viewModel) {
+    // Log user engagement time before navigating
+    final engagementTime = DateTime.now().difference(_startTime).inMilliseconds;
+    debugPrint('[HomeView] User engagement time: $engagementTime ms');
+    FirebaseAnalytics.instance.logEvent(
+      name: 'screen_engagement_flutter',
+      parameters: {
+        'screen_name': 'HomeView',
+        'engagement_time_msec': engagementTime,
+        // Add any other parameters you want
+      },
+    );
+    viewModel.onTapProfile(context);
   }
 
   @override
@@ -53,7 +94,7 @@ class _HomeViewState extends State<HomeView> {
                   HomeHeader(
                     titlePrefix: "Welcome ",
                     titleName: authViewModel.displayName, // Use authViewModel
-                    onProfileTap: () => viewModel.onTapProfile(context),
+                    onProfileTap: () => _goToProfile(viewModel),
                   ),
                   const Divider(height: 16, thickness: 1, color: Color(0xFFEDEDED)),
                   const SizedBox(height: 8),
@@ -118,7 +159,20 @@ class _HomeViewState extends State<HomeView> {
                                   // Emergency (grande)
                                   EmergencyButton(
                                     width: emergencyW,
-                                    onPressed: () => viewModel.onTapEmergency(context),
+                                    onPressed: () => viewModel.onTapEmergency(
+                                      context,
+                                      onNavigate: (contacts) {
+                                        if (!mounted) return;
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => ChangeNotifierProvider(
+                                              create: (_) => EmergencyViewModel(contacts: contacts),
+                                              child: const EmergencyView(),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
                                     textStyle: textTheme.titleMedium?.copyWith(
                                       fontWeight: FontWeight.w600,
                                     ),

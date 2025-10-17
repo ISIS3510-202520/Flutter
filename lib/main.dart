@@ -5,6 +5,7 @@ import 'package:here4u/app.dart';
 import 'firebase_options.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +18,14 @@ Future<void> main() async {
 
   // Initialize Firebase Analytics
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
+  // Force enable data collection
+  await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+  await FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
+  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+
+  // Forward Flutter framework errors to Crashlytics
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
   // Start the startup trace at the very beginning
   final trace = FirebasePerformance.instance.newTrace("app_flutter_startup");
