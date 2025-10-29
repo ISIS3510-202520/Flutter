@@ -69,19 +69,21 @@ class SummaryRequest {
   }
 
   factory SummaryRequest.fromMap(String id, Map<String, dynamic> map) {
+  DateTime? _toDate(dynamic value) {
+    if (value == null) return null;
+    if (value is Timestamp) return value.toDate();
+    if (value is DateTime) return value;
+    return null;
+  }
+
   return SummaryRequest(
     id: id,
     userId: map["userId"] ?? "",
-    startDate: map["startDate"] != null
-        ? (map["startDate"] as Timestamp).toDate()
-        : DateTime.now(),
-    endDate: map["endDate"] != null
-        ? (map["endDate"] as Timestamp).toDate()
-        : DateTime.now(),
-    generatedAt: map["generatedAt"] != null
-        ? (map["generatedAt"] as Timestamp).toDate()
-        : null,
+    startDate: _toDate(map["startDate"]) ?? DateTime.now(),
+    endDate: _toDate(map["endDate"]) ?? DateTime.now(),
+    generatedAt: _toDate(map["generatedAt"]),
     summaryText: map["summaryText"] ?? "",
   );
 }
+
 }
