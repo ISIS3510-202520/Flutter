@@ -1,5 +1,5 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:here4u/mvvm/ui/view/auth/auth_view.dart';
 import 'package:here4u/mvvm/ui/view/auth/recover_password_view.dart';
 import 'package:here4u/mvvm/ui/view/auth/register_view.dart';
 import 'package:here4u/mvvm/ui/view_model/login_view_model.dart';
@@ -18,33 +18,58 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+  late DateTime _startTime;
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final viewModel = LoginViewModel();
 
-  void _login() async {
+  @override
+  void initState() {
+    super.initState();
+    _startTime = DateTime.now();
+    debugPrint("[LoginView] logging screen view");
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: 'LoginView',
+      screenClass: 'LoginView',
+    );
+  }
+
+  void _login() {
     final viewModel = context.read<LoginViewModel>();
-    await viewModel.refreshEmailVerification(context);
-    final result = await viewModel.login(
+    viewModel.loginWithCallback(
       _emailController.text,
       _passwordController.text,
       context,
+      (result) {
+        if (result != null) {
+          SnackWarning.show(context, "Invalid credentials!");
+          return;
+        } else {
+          final engagementTime = DateTime.now().difference(_startTime).inMilliseconds;
+          debugPrint('[LoginView] User engagement time: $engagementTime ms');
+          FirebaseAnalytics.instance.logEvent(
+            name: 'screen_engagement_flutter',
+            parameters: {
+              'screen_name': 'LoginView',
+              'engagement_time_msec': engagementTime,
+            },
+          );
+        }
+      },
     );
-    if (result != null && mounted) {
-      SnackWarning.show(context, result);
-      return; // Abort login
-    }
-    if (!mounted) return;
-    // Proceed to home via auth_view
-    Navigator.pop(context); // Close login view
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => AuthView()),
-    );
-    return;
   }
 
   void _register() {
+    final engagementTime = DateTime.now().difference(_startTime).inMilliseconds;
+    debugPrint('[LoginView] User engagement time: $engagementTime ms');
+    FirebaseAnalytics.instance.logEvent(
+      name: 'screen_engagement_flutter',
+      parameters: {
+        'screen_name': 'LoginView',
+        'engagement_time_msec': engagementTime,
+      },
+    );
     final viewModel = RegisterViewModel();
     Navigator.push(
       context,
@@ -55,9 +80,19 @@ class _LoginViewState extends State<LoginView> {
         ),
       ),
     );
+    _startTime = DateTime.now(); // Reset start time for next engagement tracking
   }
 
   void _recoverPassword() {
+    final engagementTime = DateTime.now().difference(_startTime).inMilliseconds;
+    debugPrint('[LoginView] User engagement time: $engagementTime ms');
+    FirebaseAnalytics.instance.logEvent(
+      name: 'screen_engagement_flutter',
+      parameters: {
+        'screen_name': 'LoginView',
+        'engagement_time_msec': engagementTime,
+      },
+    );
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -67,6 +102,7 @@ class _LoginViewState extends State<LoginView> {
         ),
       ),
     );
+    _startTime = DateTime.now(); // Reset start time for next engagement tracking
   }
 
   @override

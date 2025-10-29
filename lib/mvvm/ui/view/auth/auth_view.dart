@@ -6,9 +6,13 @@ import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
 import 'package:here4u/mvvm/ui/view_model/login_view_model.dart';
 import 'package:here4u/mvvm/ui/view_model/home_view_model.dart';
 
-class AuthView extends StatelessWidget {
+class AuthView extends StatefulWidget {
   const AuthView({super.key});
+  @override
+  State<AuthView> createState() => _AuthViewState();
+}
 
+class _AuthViewState extends State<AuthView> {
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthViewModel>(

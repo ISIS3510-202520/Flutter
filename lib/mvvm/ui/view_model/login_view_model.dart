@@ -3,10 +3,6 @@ import 'package:provider/provider.dart';
 import 'auth_view_model.dart';
 
 class LoginViewModel extends ChangeNotifier {
-  Future<String?> login(String email, String password, BuildContext context) async {
-    final authViewModel = context.read<AuthViewModel>();
-    return await authViewModel.signInWithEmail(email, password);
-  }
 
   Future<String?> sendEmailVerification(BuildContext context) async {
     final authViewModel = context.read<AuthViewModel>();
@@ -26,5 +22,17 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> refreshEmailVerification(BuildContext context) async {
     final authViewModel = context.read<AuthViewModel>();
     await authViewModel.refreshEmailVerification();
+  }
+
+  Future<void> loginWithCallback(
+    String email,
+    String password,
+    BuildContext context,
+    void Function(String? result) onComplete,
+  ) async {
+    final authViewModel = context.read<AuthViewModel>();
+    await refreshEmailVerification(context);
+    final result = await authViewModel.signInWithEmail(email, password);
+    onComplete(result);
   }
 }

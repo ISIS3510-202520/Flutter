@@ -1,10 +1,26 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:here4u/mvvm/ui/view_model/emergency_view_model.dart';
 import 'package:here4u/mvvm/ui/widgets/buttons/rounded_button.dart';
 
-class EmergencyView extends StatelessWidget {
+class EmergencyView extends StatefulWidget {
   const EmergencyView({super.key});
+
+  @override
+  State<EmergencyView> createState() => _EmergencyViewState();
+}
+
+class _EmergencyViewState extends State<EmergencyView> {
+  @override
+  void initState() {
+    super.initState();
+    debugPrint("[EmergencyView] logging screen view");
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: 'HomeView',
+      screenClass: 'HomeView',
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

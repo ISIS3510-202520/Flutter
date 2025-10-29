@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:here4u/models/emotion.dart';
 import 'package:here4u/mvvm/ui/view/journaling/journaling_view.dart';
 import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
@@ -6,8 +7,42 @@ import 'package:here4u/mvvm/ui/view_model/identify_emotions_view_model.dart';
 import 'package:here4u/mvvm/ui/view_model/journaling_view_model.dart';
 import 'package:provider/provider.dart';
 
-class IdentifyEmotionsView extends StatelessWidget {
+class IdentifyEmotionsView extends StatefulWidget {
   const IdentifyEmotionsView({super.key});
+
+  @override
+  State<IdentifyEmotionsView> createState() => _IdentifyEmotionsViewState();
+}
+
+class _IdentifyEmotionsViewState extends State<IdentifyEmotionsView> with WidgetsBindingObserver {
+  late DateTime _startTime;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _startTime = DateTime.now();
+    debugPrint("[IdentifyEmotionsView] logging screen view");
+    FirebaseAnalytics.instance.logScreenView(
+      screenName: 'IdentifyEmotionsView',
+      screenClass: 'IdentifyEmotionsView',
+    );
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    final engagementTime = DateTime.now().difference(_startTime).inMilliseconds;
+    debugPrint('[IdentifyEmotionsView] User engagement time: $engagementTime ms');
+    FirebaseAnalytics.instance.logEvent(
+      name: 'identify_emotions_engagement',
+      parameters: {
+        'screen_name': 'IdentifyEmotionsView',
+        'engagement_time_msec': engagementTime,
+      },
+    );
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

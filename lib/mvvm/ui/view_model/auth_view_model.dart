@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,10 +7,15 @@ import '../../../models/user_entity.dart';
 class AuthViewModel extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
 
   User? _currentUser;
   UserEntity? _userEntity;
   bool _isLoading = true;
+
+  // Session tracking variables
+  DateTime? _sessionStartTime;
+  int _totalSessionDuration = 0; // in seconds
 
   // Getters
   User? get currentUser => _currentUser;
@@ -21,6 +27,7 @@ class AuthViewModel extends ChangeNotifier {
       _userEntity?.displayName ?? _currentUser?.displayName ?? 'User';
   int get currentStreak => _userEntity?.currentStreak ?? 0;
   int get longestStreak => _userEntity?.longestStreak ?? 0;
+  int get totalSessionDuration => _totalSessionDuration;
 
   AuthViewModel() {
     _initializeAuth();
@@ -28,18 +35,58 @@ class AuthViewModel extends ChangeNotifier {
 
   void _initializeAuth() {
     _auth.authStateChanges().listen((User? user) async {
+      
       debugPrint('[AuthViewModel] Auth state changed: ${user?.uid}');
       _currentUser = user;
 
       if (user != null) {
         await _loadUserData();
+        _startSession(); // Start tracking when user logs in
       } else {
+        _endSession(); // Stop tracking when user logs out
         _userEntity = null;
       }
 
       _isLoading = false;
       notifyListeners();
     });
+  }
+
+  void _startSession() {
+    _sessionStartTime = DateTime.now();
+    debugPrint('[AuthViewModel] Session started at: $_sessionStartTime');
+    
+    // Log session start - using custom event name
+    _analytics.logEvent(
+      name: 'user_session_start',
+      parameters: {
+        'timestamp': _sessionStartTime!.millisecondsSinceEpoch,
+        'user_id': _currentUser?.uid ?? 'unknown',
+      },
+    );
+  }
+
+  void _endSession() {
+    if (_sessionStartTime != null) {
+      final sessionDuration = DateTime.now().difference(_sessionStartTime!).inSeconds;
+      _totalSessionDuration += sessionDuration;
+      
+      debugPrint('[AuthViewModel] Session ended. Duration: ${sessionDuration}s, Total: ${_totalSessionDuration}s');
+      
+      // Log session end - using custom event name
+      _analytics.logEvent(
+        name: 'user_session_end',
+        parameters: {
+          'session_duration_seconds': sessionDuration,
+          'total_session_duration_seconds': _totalSessionDuration,
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+        },
+      );
+      
+      // Only reset session start time, keep total duration
+      _sessionStartTime = null;
+      // Don't reset _totalSessionDuration here - it should persist
+    }
   }
 
   Future<void> _loadUserData() async {
@@ -78,8 +125,24 @@ class AuthViewModel extends ChangeNotifier {
         });
       }
 
+      await _analytics.logLogin(loginMethod: 'email');
+      await _analytics.logEvent(
+        name: 'user_login',
+        parameters: {
+          'method': 'email',
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+        },
+      );
+
       return null; // Success
     } catch (e) {
+      await _analytics.logEvent(
+        name: 'login_failed',
+        parameters: {
+          'error': e.toString(),
+          'method': 'email',
+        },
+      );
       return e.toString();
     }
   }
@@ -125,6 +188,15 @@ class AuthViewModel extends ChangeNotifier {
         await user.sendEmailVerification();
         await user.updateDisplayName(displayName);
 
+        await _analytics.logSignUp(signUpMethod: 'email');
+        await _analytics.logEvent(
+          name: 'user_registration',
+          parameters: {
+            'method': 'email',
+            'timestamp': DateTime.now().millisecondsSinceEpoch,
+          },
+        );
+
         return null; // Success
       }
 
@@ -137,6 +209,15 @@ class AuthViewModel extends ChangeNotifier {
   Future<String?> sendPasswordReset(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
+      
+      await _analytics.logEvent(
+        name: 'password_reset_requested',
+        parameters: {
+          'method': 'email',
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+        },
+      );
+      
       return null;
     } catch (e) {
       return e.toString();
@@ -145,7 +226,32 @@ class AuthViewModel extends ChangeNotifier {
 
   Future<void> signOut() async {
     try {
+      // Calculate final session duration before logout
+      int finalSessionDuration = 0;
+      if (_sessionStartTime != null) {
+        finalSessionDuration = DateTime.now().difference(_sessionStartTime!).inSeconds;
+        _totalSessionDuration += finalSessionDuration;
+      }
+
+      // Store total before signOut (which triggers _endSession)
+      final totalTimeSpent = _totalSessionDuration;
+
       await _auth.signOut();
+
+      await _analytics.logEvent(
+        name: 'user_logout',
+        parameters: {
+          'timestamp': DateTime.now().millisecondsSinceEpoch,
+          'session_duration_seconds': finalSessionDuration,
+          'total_time_in_app_seconds': totalTimeSpent,
+        },
+      );
+
+      debugPrint('[AuthViewModel] User logged out. Total session time: ${totalTimeSpent}s');
+      
+      // Reset total duration only after logout analytics
+      _totalSessionDuration = 0;
+      
     } catch (e) {
       debugPrint('[AuthViewModel] Sign out error: $e');
     }
@@ -201,5 +307,13 @@ class AuthViewModel extends ChangeNotifier {
       debugPrint('[AuthViewModel] Email verified after refresh: ${_currentUser?.emailVerified}');
       notifyListeners();
     }
+  }
+
+  // Optional: Method to get current session duration while active
+  int getCurrentSessionDuration() {
+    if (_sessionStartTime != null) {
+      return DateTime.now().difference(_sessionStartTime!).inSeconds;
+    }
+    return 0;
   }
 }
