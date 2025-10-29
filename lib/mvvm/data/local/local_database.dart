@@ -9,7 +9,7 @@ part 'local_database.g.dart';
 
 @DataClassName('LocalSummary')
 class LocalSummaries extends Table {
-  TextColumn get id => text()(); // Firestore document ID
+  TextColumn get id => text()(); 
   TextColumn get userId => text()();
   DateTimeColumn get startDate => dateTime()();
   DateTimeColumn get endDate => dateTime()();
@@ -27,12 +27,10 @@ class LocalDatabase extends _$LocalDatabase {
   @override
   int get schemaVersion => 1;
 
-  // Insert or update a summary
   Future<void> upsertSummary(LocalSummary summary) async {
     await into(localSummaries).insertOnConflictUpdate(summary);
   }
 
-  // Retrieve all summaries for a user
   Future<List<LocalSummary>> getSummaries(String userId) async {
     return (select(localSummaries)
           ..where((tbl) => tbl.userId.equals(userId))
@@ -40,17 +38,13 @@ class LocalDatabase extends _$LocalDatabase {
         .get();
   }
 
-  // Save the latest summary and remove older ones
   Future<void> saveLatestSummary(LocalSummary summary) async {
-    // Step 1: Delete all previous summaries for that user
     await (delete(localSummaries)..where((t) => t.userId.equals(summary.userId))).go();
 
-    // Step 2: Insert the new summary
     await into(localSummaries).insertOnConflictUpdate(summary);
   }
 
 
-  // Delete a summary
   Future<void> deleteSummary(String id) async {
     await (delete(localSummaries)..where((t) => t.id.equals(id))).go();
   }

@@ -8,7 +8,7 @@ import 'package:here4u/mvvm/data/services/summary_request_service.dart';
 class SummaryViewModel extends ChangeNotifier {
   final SummaryRequestRepository _repo;
 
-  SummaryRequest? _req;           // entidad enriquecida con summaryText
+  SummaryRequest? _req;           
   String commonFeeling = 'insert most common feeling this week';
 
   SummaryViewModel({SummaryRequestRepository? repository})
@@ -26,13 +26,13 @@ class SummaryViewModel extends ChangeNotifier {
     final existingSummary = await _repo.getSummaryForDate(userId, request.endDate);
 
     if (existingSummary != null) {
-    // Reuse existing one
+    
       _req = existingSummary;
     }
     else{final journals = await JournalRepository(JournalService())
       .getJournalsInRange(userId, request.startDate, request.endDate);
 
-    // En el futuro, el commonFeeling puede venir del pipeline también.
+    
     commonFeeling = '';
 
     _req = await _repo.generateFromRequest(request, journals);
