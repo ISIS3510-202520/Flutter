@@ -74,10 +74,10 @@ Instructions:
 }
 
 
-/// Service: genera summaryText llamando a OpenAI Responses API.
+
 class SummaryRequestService {
   final String _openAIBase = "https://api.openai.com/v1";
-  final String _model = "gpt-4o-mini"; // ajusta si usas otro modelo
+  final String _model = "gpt-4o-mini"; 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<SummaryRequest> generateFromRequest(
@@ -99,7 +99,7 @@ class SummaryRequestService {
       'openAIBase': _openAIBase,
     };
 
-    // Run the heavy backend + AI work in an isolate
+    
     final result = await compute(isolateGenerateSummary, args);
 
     return result;

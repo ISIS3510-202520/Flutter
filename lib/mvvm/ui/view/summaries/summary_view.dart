@@ -12,7 +12,7 @@ class SummaryView extends StatelessWidget {
   return Builder(
     builder: (context) {
       final authVm = context.read<AuthViewModel>();
-      final userId = authVm.userEntity?.id ?? 'me'; // fallback if null
+      final userId = authVm.userEntity?.id ?? 'me'; 
 
       return ChangeNotifierProvider(
         create: (_) => SummaryViewModel()..init(userId: userId),
