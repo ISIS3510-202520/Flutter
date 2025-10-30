@@ -8,39 +8,51 @@ import 'package:here4u/mvvm/data/services/summary_request_service.dart';
 class SummaryViewModel extends ChangeNotifier {
   final SummaryRequestRepository _repo;
 
-  SummaryRequest? _req;           // entidad enriquecida con summaryText
+  SummaryRequest? _req;           
   String commonFeeling = 'insert most common feeling this week';
 
   SummaryViewModel({SummaryRequestRepository? repository})
       : _repo = repository ?? SummaryRequestRepository(SummaryRequestService());
 
   Future<void> init({required String userId}) async {
-    final now = DateTime.now();
-    
-    final request = SummaryRequest.create(
-      userId: userId,
-      startDate: now.subtract(const Duration(days: 7)),
-      endDate: now,
-    );
+  final now = DateTime.now();
 
+  final request = SummaryRequest.create(
+    userId: userId,
+    startDate: now.subtract(const Duration(days: 7)),
+    endDate: now,
+  );
+
+  final repo = _repo;
+
+  try {
     final existingSummary = await _repo.getSummaryForDate(userId, request.endDate);
-
     if (existingSummary != null) {
-    // Reuse existing one
       _req = existingSummary;
     }
-    else{final journals = await JournalRepository(JournalService())
-      .getJournalsInRange(userId, request.startDate, request.endDate);
+    else{
 
-    // En el futuro, el commonFeeling puede venir del pipeline también.
-    commonFeeling = '';
+    final journals = await JournalRepository(JournalService())
+        .getJournalsInRange(userId, request.startDate, request.endDate);
 
-    _req = await _repo.generateFromRequest(request, journals);
-    _repo.saveSummary(_req!);
+    _req = await repo.getOrGenerateSummary(request, journals);
     }
-    notifyListeners();
-    
+  } catch (e) {
+    print("⚠️ ECN Strategy failed entirely: $e");
+    _req = SummaryRequest(
+      id: "error",
+      userId: userId,
+      startDate: request.startDate,
+      endDate: request.endDate,
+      generatedAt: DateTime.now(),
+      summaryText:
+          "Unable to retrieve or generate your summary at this time.",
+    );
   }
+
+  notifyListeners();
+}
+
 
   // ==================== Parsing helpers ====================
 
