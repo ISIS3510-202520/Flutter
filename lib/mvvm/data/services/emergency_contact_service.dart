@@ -1,6 +1,7 @@
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart'; // <- necesario para usar compute
 import 'package:here4u/models/emergency_contact.dart';
-
 
 class EmergencyContactService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -19,10 +20,21 @@ class EmergencyContactService {
         .where("userId", isEqualTo: userId)
         .get();
 
-    return snapshot.docs
-        .map((doc) => EmergencyContact.fromMap(doc.id, doc.data()))
+    
+    final rawData = snapshot.docs // docs en json porque es más liviano
+        .map((doc) => {'id': doc.id, ...doc.data()})
         .toList();
+
+    return await compute(_parseContactsInIsolate, jsonEncode(rawData));  // Isolando
   }
+}
 
+/// Isolates
+List<EmergencyContact> _parseContactsInIsolate(String rawJson) {
+  final List<dynamic> decoded = jsonDecode(rawJson);
 
+  return decoded
+      .map((data) =>
+          EmergencyContact.fromMap(data['id'] as String, Map<String, dynamic>.from(data)))
+      .toList();
 }
