@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:here4u/mvvm/ui/view/auth/auth_view.dart';
+import 'package:here4u/mvvm/ui/view/journaling/journal_list_view.dart';
 import 'package:here4u/mvvm/ui/view/summaries/summary_view.dart';
 import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
+import 'package:here4u/mvvm/ui/view_model/journal_list_view_model.dart';
 import 'package:provider/provider.dart';
 
 class ProfileViewModel extends ChangeNotifier {
@@ -30,10 +32,16 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   void onTapJournal(BuildContext context) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Journal: soon!')));
-  }
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ChangeNotifierProvider(
+        create: (_) => JournalListViewModel(userId: context.read<AuthViewModel>().userEntity?.id ?? 'me'),
+        child: const JournalListView(),
+      ),
+    ),
+  );
+}
 
   Future<void> onTapSignOut(BuildContext context) async {
     final authViewModel = context.read<AuthViewModel>();
