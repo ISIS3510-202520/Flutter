@@ -13,30 +13,42 @@ class EmergencyContactService {
 
   /// Guarda un contacto en Firestore, Local DB y Cache.
   Future<void> saveContact(EmergencyContact contact) async {
-    final localContact = LocalEmergencyContact(
-      id: contact.id,
-      userId: contact.userId,
-      name: contact.name,
-      phone: contact.phone,
-      email: contact.email,
-      relation: contact.relation,
-    );
-
     try {
-      // Intentamos guardar en Firestore
+      print("💾 Guardando contacto ${contact.name}...");
+
+      // 🔹 Primero guardamos local y cache para que sea visible inmediatamente
+      final tempLocal = LocalEmergencyContact(
+        id: contact.id,
+        userId: contact.userId,
+        name: contact.name,
+        phone: contact.phone,
+        email: contact.email,
+        relation: contact.relation,
+      );
+      await _localDb.upsertContact(tempLocal);
+      _cache.put(tempLocal);
+
+      // 🌐 Intentamos guardar en Firebase
       final docRef =
           await _firestore.collection("EmergencyContact").add(contact.toMap());
       await docRef.update({"id": docRef.id});
 
-      // Actualizamos local DB y cache
-      final syncedContact = localContact.copyWith(id: docRef.id);
+      // 🔹 Actualizamos el ID real en local y cache (para mantener sincronía)
+      final syncedContact = tempLocal.copyWith(id: docRef.id);
       await _localDb.upsertContact(syncedContact);
       _cache.put(syncedContact);
 
-      print("✅ Contacto guardado y sincronizado correctamente.");
+      print("✅ Contacto guardado y sincronizado correctamente con Firebase.");
     } on SocketException {
-      // 🌐 Sin internet → guarda solo local y cache
-      print("⚠️ Sin conexión. Guardando contacto solo en local DB y caché.");
+      print("⚠️ Sin conexión. Guardando solo en local y caché.");
+      final localContact = LocalEmergencyContact(
+        id: contact.id,
+        userId: contact.userId,
+        name: contact.name,
+        phone: contact.phone,
+        email: contact.email,
+        relation: contact.relation,
+      );
       await _localDb.upsertContact(localContact);
       _cache.put(localContact);
     } catch (e) {
@@ -45,43 +57,21 @@ class EmergencyContactService {
   }
 
   /// Obtiene contactos del usuario.
-  /// Estrategia jerárquica:
-  /// 1. Cache (si ya están cargados)
-  /// 2. Local DB (si no hay cache o sin internet)
-  /// 3. Firebase (si hay conexión)
-  /// Si no hay nada, retorna lista vacía.
   Future<List<EmergencyContact>> getContacts(String userId) async {
     try {
-      // 🔹 1. Revisar cache primero
-      if (_cache.size > 0) {
-        print("⚡ Recuperando contactos desde caché en memoria");
-        return _cache.allContacts
-            .where((c) => c.userId == userId)
-            .map((c) => EmergencyContact(
-                  id: c.id,
-                  userId: c.userId,
-                  name: c.name,
-                  phone: c.phone,
-                  email: c.email,
-                  relation: c.relation,
-                ))
-            .toList();
-      }
-
-      // 🔹 2. Intentar conexión con Firestore (si hay internet)
+      print("🌐 Intentando obtener contactos desde Firebase...");
       final snapshot = await _firestore
           .collection("EmergencyContact")
           .where("userId", isEqualTo: userId)
           .get();
 
-      // ✅ Si hay datos en Firestore → sincronizar con local y cache
       final rawData =
           snapshot.docs.map((doc) => {'id': doc.id, ...doc.data()}).toList();
 
       final contacts =
           await compute(_parseContactsInIsolate, jsonEncode(rawData));
 
-      // Limpiar y actualizar base local
+      // ✅ Sincronizamos local y cache con los datos más nuevos
       await _localDb.clearContactsForUser(userId);
       for (final c in contacts) {
         final localC = LocalEmergencyContact(
@@ -96,15 +86,12 @@ class EmergencyContactService {
         _cache.put(localC);
       }
 
-      print("✅ Contactos actualizados desde Firebase.");
+      print("✅ Contactos actualizados y sincronizados desde Firebase.");
       return contacts;
     } on SocketException {
-      // 🔹 3. Sin conexión → revisar local storage
-      print("⚠️ Sin conexión. Revisando cache y base local...");
-
-      // Si hay algo en cache, devolverlo
+      print("⚠️ Sin conexión. Revisando caché...");
       if (_cache.size > 0) {
-        print("⚡ Devolviendo contactos desde caché (offline)");
+        print("⚡ Devolviendo contactos desde caché (offline).");
         return _cache.allContacts
             .where((c) => c.userId == userId)
             .map((c) => EmergencyContact(
@@ -118,7 +105,7 @@ class EmergencyContactService {
             .toList();
       }
 
-      // Si no hay en cache, revisar DB local
+      print("📦 No hay caché. Revisando base local...");
       final localContacts = await _localDb.getContacts(userId);
       if (localContacts.isNotEmpty) {
         _cache.preload(localContacts);
@@ -135,8 +122,7 @@ class EmergencyContactService {
             .toList();
       }
 
-      // Si no hay nada en cache ni en local
-      print("⚠️ Sin datos locales ni conexión. Retornando lista vacía.");
+      print("⚠️ Sin datos en Firebase, caché ni local. Retornando vacío.");
       return [];
     } catch (e) {
       print("❌ Error obteniendo contactos: $e");
