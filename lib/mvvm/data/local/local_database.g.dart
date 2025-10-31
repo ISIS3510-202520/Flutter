@@ -423,15 +423,425 @@ class LocalSummariesCompanion extends UpdateCompanion<LocalSummary> {
   }
 }
 
+class $LocalEmergencyContactsTable extends LocalEmergencyContacts
+    with TableInfo<$LocalEmergencyContactsTable, LocalEmergencyContact> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LocalEmergencyContactsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
+  @override
+  late final GeneratedColumn<String> phone = GeneratedColumn<String>(
+    'phone',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _emailMeta = const VerificationMeta('email');
+  @override
+  late final GeneratedColumn<String> email = GeneratedColumn<String>(
+    'email',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _relationMeta = const VerificationMeta(
+    'relation',
+  );
+  @override
+  late final GeneratedColumn<String> relation = GeneratedColumn<String>(
+    'relation',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    userId,
+    name,
+    phone,
+    email,
+    relation,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'local_emergency_contacts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LocalEmergencyContact> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('phone')) {
+      context.handle(
+        _phoneMeta,
+        phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_phoneMeta);
+    }
+    if (data.containsKey('email')) {
+      context.handle(
+        _emailMeta,
+        email.isAcceptableOrUnknown(data['email']!, _emailMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_emailMeta);
+    }
+    if (data.containsKey('relation')) {
+      context.handle(
+        _relationMeta,
+        relation.isAcceptableOrUnknown(data['relation']!, _relationMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_relationMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LocalEmergencyContact map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LocalEmergencyContact(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      phone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phone'],
+      )!,
+      email: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}email'],
+      )!,
+      relation: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}relation'],
+      )!,
+    );
+  }
+
+  @override
+  $LocalEmergencyContactsTable createAlias(String alias) {
+    return $LocalEmergencyContactsTable(attachedDatabase, alias);
+  }
+}
+
+class LocalEmergencyContact extends DataClass
+    implements Insertable<LocalEmergencyContact> {
+  final String id;
+  final String userId;
+  final String name;
+  final String phone;
+  final String email;
+  final String relation;
+  const LocalEmergencyContact({
+    required this.id,
+    required this.userId,
+    required this.name,
+    required this.phone,
+    required this.email,
+    required this.relation,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['user_id'] = Variable<String>(userId);
+    map['name'] = Variable<String>(name);
+    map['phone'] = Variable<String>(phone);
+    map['email'] = Variable<String>(email);
+    map['relation'] = Variable<String>(relation);
+    return map;
+  }
+
+  LocalEmergencyContactsCompanion toCompanion(bool nullToAbsent) {
+    return LocalEmergencyContactsCompanion(
+      id: Value(id),
+      userId: Value(userId),
+      name: Value(name),
+      phone: Value(phone),
+      email: Value(email),
+      relation: Value(relation),
+    );
+  }
+
+  factory LocalEmergencyContact.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LocalEmergencyContact(
+      id: serializer.fromJson<String>(json['id']),
+      userId: serializer.fromJson<String>(json['userId']),
+      name: serializer.fromJson<String>(json['name']),
+      phone: serializer.fromJson<String>(json['phone']),
+      email: serializer.fromJson<String>(json['email']),
+      relation: serializer.fromJson<String>(json['relation']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'userId': serializer.toJson<String>(userId),
+      'name': serializer.toJson<String>(name),
+      'phone': serializer.toJson<String>(phone),
+      'email': serializer.toJson<String>(email),
+      'relation': serializer.toJson<String>(relation),
+    };
+  }
+
+  LocalEmergencyContact copyWith({
+    String? id,
+    String? userId,
+    String? name,
+    String? phone,
+    String? email,
+    String? relation,
+  }) => LocalEmergencyContact(
+    id: id ?? this.id,
+    userId: userId ?? this.userId,
+    name: name ?? this.name,
+    phone: phone ?? this.phone,
+    email: email ?? this.email,
+    relation: relation ?? this.relation,
+  );
+  LocalEmergencyContact copyWithCompanion(
+    LocalEmergencyContactsCompanion data,
+  ) {
+    return LocalEmergencyContact(
+      id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      name: data.name.present ? data.name.value : this.name,
+      phone: data.phone.present ? data.phone.value : this.phone,
+      email: data.email.present ? data.email.value : this.email,
+      relation: data.relation.present ? data.relation.value : this.relation,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalEmergencyContact(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('name: $name, ')
+          ..write('phone: $phone, ')
+          ..write('email: $email, ')
+          ..write('relation: $relation')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, userId, name, phone, email, relation);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LocalEmergencyContact &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.name == this.name &&
+          other.phone == this.phone &&
+          other.email == this.email &&
+          other.relation == this.relation);
+}
+
+class LocalEmergencyContactsCompanion
+    extends UpdateCompanion<LocalEmergencyContact> {
+  final Value<String> id;
+  final Value<String> userId;
+  final Value<String> name;
+  final Value<String> phone;
+  final Value<String> email;
+  final Value<String> relation;
+  final Value<int> rowid;
+  const LocalEmergencyContactsCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.email = const Value.absent(),
+    this.relation = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LocalEmergencyContactsCompanion.insert({
+    required String id,
+    required String userId,
+    required String name,
+    required String phone,
+    required String email,
+    required String relation,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       userId = Value(userId),
+       name = Value(name),
+       phone = Value(phone),
+       email = Value(email),
+       relation = Value(relation);
+  static Insertable<LocalEmergencyContact> custom({
+    Expression<String>? id,
+    Expression<String>? userId,
+    Expression<String>? name,
+    Expression<String>? phone,
+    Expression<String>? email,
+    Expression<String>? relation,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (name != null) 'name': name,
+      if (phone != null) 'phone': phone,
+      if (email != null) 'email': email,
+      if (relation != null) 'relation': relation,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LocalEmergencyContactsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? userId,
+    Value<String>? name,
+    Value<String>? phone,
+    Value<String>? email,
+    Value<String>? relation,
+    Value<int>? rowid,
+  }) {
+    return LocalEmergencyContactsCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      name: name ?? this.name,
+      phone: phone ?? this.phone,
+      email: email ?? this.email,
+      relation: relation ?? this.relation,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (phone.present) {
+      map['phone'] = Variable<String>(phone.value);
+    }
+    if (email.present) {
+      map['email'] = Variable<String>(email.value);
+    }
+    if (relation.present) {
+      map['relation'] = Variable<String>(relation.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocalEmergencyContactsCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('name: $name, ')
+          ..write('phone: $phone, ')
+          ..write('email: $email, ')
+          ..write('relation: $relation, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$LocalDatabase extends GeneratedDatabase {
   _$LocalDatabase(QueryExecutor e) : super(e);
   $LocalDatabaseManager get managers => $LocalDatabaseManager(this);
   late final $LocalSummariesTable localSummaries = $LocalSummariesTable(this);
+  late final $LocalEmergencyContactsTable localEmergencyContacts =
+      $LocalEmergencyContactsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [localSummaries];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    localSummaries,
+    localEmergencyContacts,
+  ];
 }
 
 typedef $$LocalSummariesTableCreateCompanionBuilder =
@@ -659,10 +1069,253 @@ typedef $$LocalSummariesTableProcessedTableManager =
       LocalSummary,
       PrefetchHooks Function()
     >;
+typedef $$LocalEmergencyContactsTableCreateCompanionBuilder =
+    LocalEmergencyContactsCompanion Function({
+      required String id,
+      required String userId,
+      required String name,
+      required String phone,
+      required String email,
+      required String relation,
+      Value<int> rowid,
+    });
+typedef $$LocalEmergencyContactsTableUpdateCompanionBuilder =
+    LocalEmergencyContactsCompanion Function({
+      Value<String> id,
+      Value<String> userId,
+      Value<String> name,
+      Value<String> phone,
+      Value<String> email,
+      Value<String> relation,
+      Value<int> rowid,
+    });
+
+class $$LocalEmergencyContactsTableFilterComposer
+    extends Composer<_$LocalDatabase, $LocalEmergencyContactsTable> {
+  $$LocalEmergencyContactsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get relation => $composableBuilder(
+    column: $table.relation,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LocalEmergencyContactsTableOrderingComposer
+    extends Composer<_$LocalDatabase, $LocalEmergencyContactsTable> {
+  $$LocalEmergencyContactsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get relation => $composableBuilder(
+    column: $table.relation,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LocalEmergencyContactsTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $LocalEmergencyContactsTable> {
+  $$LocalEmergencyContactsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get phone =>
+      $composableBuilder(column: $table.phone, builder: (column) => column);
+
+  GeneratedColumn<String> get email =>
+      $composableBuilder(column: $table.email, builder: (column) => column);
+
+  GeneratedColumn<String> get relation =>
+      $composableBuilder(column: $table.relation, builder: (column) => column);
+}
+
+class $$LocalEmergencyContactsTableTableManager
+    extends
+        RootTableManager<
+          _$LocalDatabase,
+          $LocalEmergencyContactsTable,
+          LocalEmergencyContact,
+          $$LocalEmergencyContactsTableFilterComposer,
+          $$LocalEmergencyContactsTableOrderingComposer,
+          $$LocalEmergencyContactsTableAnnotationComposer,
+          $$LocalEmergencyContactsTableCreateCompanionBuilder,
+          $$LocalEmergencyContactsTableUpdateCompanionBuilder,
+          (
+            LocalEmergencyContact,
+            BaseReferences<
+              _$LocalDatabase,
+              $LocalEmergencyContactsTable,
+              LocalEmergencyContact
+            >,
+          ),
+          LocalEmergencyContact,
+          PrefetchHooks Function()
+        > {
+  $$LocalEmergencyContactsTableTableManager(
+    _$LocalDatabase db,
+    $LocalEmergencyContactsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LocalEmergencyContactsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$LocalEmergencyContactsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$LocalEmergencyContactsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> phone = const Value.absent(),
+                Value<String> email = const Value.absent(),
+                Value<String> relation = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LocalEmergencyContactsCompanion(
+                id: id,
+                userId: userId,
+                name: name,
+                phone: phone,
+                email: email,
+                relation: relation,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String userId,
+                required String name,
+                required String phone,
+                required String email,
+                required String relation,
+                Value<int> rowid = const Value.absent(),
+              }) => LocalEmergencyContactsCompanion.insert(
+                id: id,
+                userId: userId,
+                name: name,
+                phone: phone,
+                email: email,
+                relation: relation,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LocalEmergencyContactsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$LocalDatabase,
+      $LocalEmergencyContactsTable,
+      LocalEmergencyContact,
+      $$LocalEmergencyContactsTableFilterComposer,
+      $$LocalEmergencyContactsTableOrderingComposer,
+      $$LocalEmergencyContactsTableAnnotationComposer,
+      $$LocalEmergencyContactsTableCreateCompanionBuilder,
+      $$LocalEmergencyContactsTableUpdateCompanionBuilder,
+      (
+        LocalEmergencyContact,
+        BaseReferences<
+          _$LocalDatabase,
+          $LocalEmergencyContactsTable,
+          LocalEmergencyContact
+        >,
+      ),
+      LocalEmergencyContact,
+      PrefetchHooks Function()
+    >;
 
 class $LocalDatabaseManager {
   final _$LocalDatabase _db;
   $LocalDatabaseManager(this._db);
   $$LocalSummariesTableTableManager get localSummaries =>
       $$LocalSummariesTableTableManager(_db, _db.localSummaries);
+  $$LocalEmergencyContactsTableTableManager get localEmergencyContacts =>
+      $$LocalEmergencyContactsTableTableManager(
+        _db,
+        _db.localEmergencyContacts,
+      );
 }
