@@ -2,6 +2,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:here4u/mvvm/ui/view/auth/auth_view.dart';
+import 'package:here4u/core/services/network_service.dart';
 import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -28,8 +29,11 @@ class _AppState extends State<App> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => AuthViewModel(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthViewModel()),
+        ChangeNotifierProvider(create: (_) => NetworkService()),
+      ],
       child: MaterialApp(
         navigatorObservers: [
           FirebaseAnalyticsObserver(analytics: widget.analytics),

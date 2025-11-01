@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../models/user_entity.dart';
+import 'package:here4u/mvvm/data/local/auth_token_lru_cache.dart';
 
 class AuthViewModel extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -31,6 +32,18 @@ class AuthViewModel extends ChangeNotifier {
 
   AuthViewModel() {
     _initializeAuth();
+    _initTokenCache();
+  }
+
+  final AuthTokenLRUCache _tokenCache = AuthTokenLRUCache();
+
+  Future<void> _initTokenCache() async {
+    try {
+      await _tokenCache.loadFromStorage();
+      debugPrint('[AuthViewModel] Loaded token cache (size=${_tokenCache.size})');
+    } catch (e) {
+      debugPrint('[AuthViewModel] Error initializing token cache: $e');
+    }
   }
 
   void _initializeAuth() {
@@ -134,6 +147,29 @@ class AuthViewModel extends ChangeNotifier {
         },
       );
 
+      // Persist auth token into the secure LRU cache for offline fallback.
+      try {
+        final user = credential.user;
+        if (user != null) {
+          final idTokenResult = await user.getIdTokenResult();
+          final tokenString = idTokenResult.token ?? await user.getIdToken();
+          final issuedAt = idTokenResult.issuedAtTime?.millisecondsSinceEpoch ?? DateTime.now().millisecondsSinceEpoch;
+          final expiresAt = idTokenResult.expirationTime?.millisecondsSinceEpoch ?? DateTime.now().add(const Duration(hours: 1)).millisecondsSinceEpoch;
+
+          final authToken = AuthToken(
+            id: user.uid,
+            token: tokenString ?? '',
+            issuedAtMillis: issuedAt,
+            expiresAtMillis: expiresAt,
+          );
+
+          await _tokenCache.put(authToken);
+          debugPrint('[AuthViewModel] Saved token for user ${user.uid} to cache');
+        }
+      } catch (e) {
+        debugPrint('[AuthViewModel] Failed to save token to cache: $e');
+      }
+
       return null; // Success
     } catch (e) {
       await _analytics.logEvent(
@@ -236,6 +272,15 @@ class AuthViewModel extends ChangeNotifier {
       // Store total before signOut (which triggers _endSession)
       final totalTimeSpent = _totalSessionDuration;
 
+      // Clear any persisted auth tokens so the app does not fall back to
+      // an offline cached session after the user explicitly signs out.
+      try {
+        await _tokenCache.clear();
+        debugPrint('[AuthViewModel] Cleared auth token cache on sign out');
+      } catch (e) {
+        debugPrint('[AuthViewModel] Failed to clear token cache: $e');
+      }
+
       await _auth.signOut();
 
       await _analytics.logEvent(
@@ -308,6 +353,12 @@ class AuthViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  /// Returns the most-recent non-expired cached token, or null.
+  AuthToken? get firstValidCachedToken => _tokenCache.firstValidToken();
+
+  /// Whether a non-expired cached token exists.
+  bool get hasValidCachedToken => firstValidCachedToken != null;
 
   // Optional: Method to get current session duration while active
   int getCurrentSessionDuration() {

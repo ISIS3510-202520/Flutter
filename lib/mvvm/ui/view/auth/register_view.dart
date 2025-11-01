@@ -21,6 +21,14 @@ class _RegisterViewState extends State<RegisterView> {
   void _register() async {
     if (!_formKey.currentState!.validate()) return;
     final viewModel = context.read<RegisterViewModel>();
+    if (!viewModel.isOnline) {
+      // Shouldn't happen because button will be disabled, but guard anyway.
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No internet connection. Waiting for connectivity...')),
+      );
+      return;
+    }
+
     await viewModel.performRegistration(
       _emailController.text,
       _passwordController.text,
@@ -31,6 +39,7 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<RegisterViewModel>();
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -48,24 +57,27 @@ class _RegisterViewState extends State<RegisterView> {
                   hintText: 'Name',
                   controller: _nameController,
                   validator: nameValidator,
+                  enabled: viewModel.isOnline && !viewModel.isLoading,
                 ),
                 const SizedBox(height: 16),
                 RoundedTextbox(
                   hintText: 'Email',
                   controller: _emailController,
                   validator: emailValidator,
+                  enabled: viewModel.isOnline && !viewModel.isLoading,
                 ),
                 const SizedBox(height: 16),
                 RoundedTextbox(
                   hintText: 'Password',
                   controller: _passwordController,
                   validator: passwordValidator,
+                  enabled: viewModel.isOnline && !viewModel.isLoading,
                 ),
                 const SizedBox(height: 32),
                 // Register Button
                 RoundedButton(
-                  text: 'Signup',
-                  onPressed: _register,
+                  text: viewModel.isOnline ? 'Signup' : 'Offline',
+                  onPressed: viewModel.isOnline && !viewModel.isLoading ? _register : null,
                   icon: Icons.app_registration,
                 ),
                 const SizedBox(height: 16),

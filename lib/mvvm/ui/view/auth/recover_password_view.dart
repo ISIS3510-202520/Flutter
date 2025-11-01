@@ -19,7 +19,15 @@ class _RecoverPasswordViewState extends State<RecoverPasswordView> {
 
   void _recover() async {
     if (!_formKey.currentState!.validate()) return;
+    // Will be provided by the Consumer in build; guard here if called directly.
     final viewModel = context.read<RecoverPasswordViewModel>();
+    if (!viewModel.isOnline) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No internet connection. Waiting for connectivity...')),
+      );
+      return;
+    }
+
     final error = await viewModel.recoverPassword(_emailController.text, context);
     if (!mounted) return;
     if (error == null) {
@@ -31,21 +39,22 @@ class _RecoverPasswordViewState extends State<RecoverPasswordView> {
     } else {
       SnackWarning.show(context, error);
     }
-    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => RecoverPasswordViewModel(),
-      child: Scaffold(
-        body: Center(
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+      child: Consumer<RecoverPasswordViewModel>(
+        builder: (context, viewModel, child) {
+          return Scaffold(
+            body: Center(
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                   const Text(
                     'Recover Password',
                     style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
@@ -63,12 +72,13 @@ class _RecoverPasswordViewState extends State<RecoverPasswordView> {
                     hintText: 'Email',
                     controller: _emailController,
                     validator: emailValidator,
+                    enabled: viewModel.isOnline && !viewModel.isLoading,
                   ),
                   const SizedBox(height: 32),
                   // Register Button
                   RoundedButton(
-                    text: 'Recover',
-                    onPressed: _recover,
+                    text: viewModel.isOnline ? 'Recover' : 'Offline',
+                    onPressed: viewModel.isOnline && !viewModel.isLoading ? _recover : null,
                     icon: Icons.email,
                   ),
                   const SizedBox(height: 16),
@@ -87,6 +97,8 @@ class _RecoverPasswordViewState extends State<RecoverPasswordView> {
             ),
           ),
         ),
+          );
+        },
       ),
     );
   }

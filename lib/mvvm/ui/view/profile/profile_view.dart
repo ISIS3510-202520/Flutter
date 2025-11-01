@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:here4u/mvvm/ui/view_model/profile_view_model.dart';
+import 'package:here4u/core/services/network_service.dart';
 import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
 import 'package:here4u/mvvm/ui/widgets/buttons/rounded_button.dart';
 
@@ -26,8 +27,9 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<ProfileViewModel>();
-    final authViewModel = context.watch<AuthViewModel>();
+  final vm = context.watch<ProfileViewModel>();
+  final authViewModel = context.watch<AuthViewModel>();
+  final network = context.watch<NetworkService>();
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -118,14 +120,18 @@ class _ProfileViewState extends State<ProfileView> {
                                   ),
                                   const SizedBox(height: 24),
 
-                                  // Sign Out (estilo parecido al Home)
+                                  // Sign Out (behaves like Login button: stays visible but shows Offline and is disabled)
                                   SizedBox(
                                     width: buttonW,
                                     child: RoundedButton(
-                                      text: "Sign Out",
-                                      onPressed: () => vm.onTapSignOut(context),
+                                      text: network.isOnline ? 'Sign Out' : 'Offline',
+                                      onPressed: network.isOnline
+                                          ? () => vm.onTapSignOut(context)
+                                          : null,
                                       isBold: true,
-                                      color: const Color(0xFF7CB4C3), // azul medio
+                                      color: network.isOnline
+                                          ? const Color(0xFF7CB4C3)
+                                          : Colors.grey,
                                       textColor: Colors.black,
                                       icon: Icons.logout,
                                     ),

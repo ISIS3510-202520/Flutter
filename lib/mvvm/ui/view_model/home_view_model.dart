@@ -7,8 +7,12 @@ import 'package:provider/provider.dart';
 import 'package:here4u/mvvm/ui/view/profile/profile_view.dart';
 import 'package:here4u/mvvm/ui/view_model/profile_view_model.dart';
 import 'auth_view_model.dart';
+import 'package:here4u/mvvm/ui/widgets/warnings/snack_warning.dart';
 
 class HomeViewModel extends ChangeNotifier {
+  final bool showOfflineFallbackOnStart;
+
+  HomeViewModel({this.showOfflineFallbackOnStart = false});
   final _repository = EmergencyContactRepository(EmergencyContactService());
   final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
 
@@ -86,6 +90,18 @@ class HomeViewModel extends ChangeNotifier {
           'timestamp': DateTime.now().millisecondsSinceEpoch,
         },
       );
+    }
+  }
+
+  /// If a valid cached session is available, show a small SnackWarning to the user.
+  void showOfflineFallbackSnack(BuildContext context) {
+    try {
+      final authViewModel = context.read<AuthViewModel>();
+      if (authViewModel.hasValidCachedToken) {
+        SnackWarning.show(context, 'Offline session available - limited features enabled');
+      }
+    } catch (e) {
+      debugPrint('[HomeViewModel] Error showing offline fallback snack: $e');
     }
   }
 

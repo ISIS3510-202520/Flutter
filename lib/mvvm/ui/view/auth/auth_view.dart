@@ -37,7 +37,6 @@ class _AuthViewState extends State<AuthView> {
           );
         }
 
-        // User is not authenticated
         return ChangeNotifierProvider(
           create: (_) => LoginViewModel(),
           child: const LoginView(),

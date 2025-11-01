@@ -8,6 +8,9 @@ import 'package:here4u/mvvm/ui/view_model/identify_emotions_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:here4u/mvvm/ui/view_model/home_view_model.dart';
 import 'package:here4u/mvvm/ui/widgets/buttons/rounded_button.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'dart:async';
+import 'package:here4u/mvvm/ui/widgets/warnings/snack_warning.dart';
 
 // Sub-widgets del Home
 import 'package:here4u/mvvm/ui/widgets/home/home_header.dart';
@@ -22,6 +25,8 @@ class HomeView extends StatefulWidget {
 }
 class _HomeViewState extends State<HomeView> {
   late DateTime _startTime;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySub;
+  bool _isOnline = true;
 
   @override
   void initState() {
@@ -32,6 +37,56 @@ class _HomeViewState extends State<HomeView> {
       screenName: 'HomeView',
       screenClass: 'HomeView',
     );
+    // If HomeViewModel requested showing an offline fallback snack on start,
+    // schedule it to run after the first frame so context.read is safe.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      try {
+        final vm = context.read<HomeViewModel>();
+        if (vm.showOfflineFallbackOnStart) {
+          vm.showOfflineFallbackSnack(context);
+        }
+      } catch (e) {
+        debugPrint('[HomeView] Error checking offline fallback snack: $e');
+      }
+    });
+
+    // Initialize connectivity listener to show snack on transitions
+    () async {
+      try {
+        final List<ConnectivityResult> initial = await Connectivity().checkConnectivity();
+        _isOnline = initial.any((r) => r != ConnectivityResult.none);
+      } catch (e) {
+        _isOnline = true; // assume online if check fails
+      }
+
+      _connectivitySub = Connectivity().onConnectivityChanged.listen((results) {
+        final nowOnline = results.any((r) => r != ConnectivityResult.none);
+        if (_isOnline && !nowOnline) {
+          // went offline
+          try {
+            if (!mounted) return;
+            SnackWarning.show(context, 'Connection lost, some features may be limited!');
+          } catch (e) {
+            debugPrint('[HomeView] Error showing offline snack: $e');
+          }
+        } else if (!_isOnline && nowOnline) {
+          // came back online
+          try {
+            if (!mounted) return;
+            SnackWarning.show(context, 'Connection recovered!');
+          } catch (e) {
+            debugPrint('[HomeView] Error showing recovery snack: $e');
+          }
+        }
+        _isOnline = nowOnline;
+      });
+    }();
+  }
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    super.dispose();
   }
   
   // Define button width as a constant
