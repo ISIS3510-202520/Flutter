@@ -10,7 +10,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load the .env file before running the app
+  // Load the .env file before running the app 
   await dotenv.load(fileName: ".env");
   
   // Initialize Firebase
