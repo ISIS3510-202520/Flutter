@@ -2,6 +2,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:here4u/mvvm/ui/view_model/emergency_view_model.dart';
+import 'package:here4u/core/services/network_service.dart';
 import 'package:here4u/mvvm/ui/widgets/buttons/rounded_button.dart';
 
 class EmergencyView extends StatefulWidget {
@@ -34,7 +35,8 @@ class _EmergencyViewState extends State<EmergencyView> {
 
   @override
   Widget build(BuildContext context) {
-    final vm = context.watch<EmergencyViewModel>();
+  final vm = context.watch<EmergencyViewModel>();
+  final network = context.watch<NetworkService>();
 
     return WillPopScope(
       onWillPop: () async {
@@ -125,12 +127,12 @@ class _EmergencyViewState extends State<EmergencyView> {
 
                     const SizedBox(height: 16),
 
-                    // Notify All button
+                    // Notify All button (mirrors Login/SignOut behavior)
                     RoundedButton(
-                      text: "Notify All",
-                      color: const Color(0xFFFFDBD2),
+                      text: network.isOnline ? 'Notify All' : 'Offline',
+                      color: network.isOnline ? const Color(0xFFFFDBD2) : Colors.grey,
                       textColor: Colors.black,
-                      onPressed: () => vm.notifyAllContacts(context),
+                      onPressed: network.isOnline ? () => vm.notifyAllContacts(context) : null,
                       icon: Icons.notifications_active,
                       width: 200,
                     ),
