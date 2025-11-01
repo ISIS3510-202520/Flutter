@@ -235,6 +235,7 @@ class EmergencyViewModel extends ChangeNotifier {
     int totalContacts = _contacts.length;
 
     for (var contact in _contacts) {
+      debugPrint('Sending emergency email to ${contact.name} at ${contact.email}');
       final success = await _sendEmergencyEmail(
         contact.email,
         contact.name,
