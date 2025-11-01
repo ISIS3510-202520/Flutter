@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mailer/mailer.dart';
@@ -12,6 +13,8 @@ import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
 
 class EmergencyViewModel extends ChangeNotifier {
   final List<EmergencyContact> _contacts;
+  DateTime? _startTime;
+  bool _engagementLogged = false;
 
   EmergencyViewModel({required List<EmergencyContact> contacts})
       : _contacts = contacts;
@@ -23,6 +26,34 @@ class EmergencyViewModel extends ChangeNotifier {
   void addContact(EmergencyContact contact) {
     _contacts.add(contact);
     notifyListeners();
+  }
+
+  /// Start tracking engagement time for analytics. Call when the view is shown.
+  void startEngagementTimer() {
+    _startTime = DateTime.now();
+    _engagementLogged = false;
+  }
+
+  /// Returns engagement time in milliseconds.
+  int getEngagementTime() {
+    if (_startTime == null) return 0;
+    return DateTime.now().difference(_startTime!).inMilliseconds;
+  }
+
+  /// Logs engagement analytics once for the view. Subsequent calls are no-ops.
+  Future<void> logEngagement(String screenName) async {
+    if (_startTime == null) return;
+    if (_engagementLogged) return;
+    final engagementTime = getEngagementTime();
+    await FirebaseAnalytics.instance.logEvent(
+      name: 'screen_engagement_flutter',
+      parameters: {
+        'screen_name': screenName,
+        'engagement_time_msec': engagementTime,
+      },
+    );
+    _engagementLogged = true;
+    debugPrint('[EmergencyViewModel] Logged engagement: $engagementTime ms for $screenName');
   }
 
   /// Handles a tap on a contact.
@@ -65,8 +96,10 @@ class EmergencyViewModel extends ChangeNotifier {
 
   /// Handles the "Back" button behavior.
   /// Current behavior: pop the current route.
-  void goBack(BuildContext context) {
-    Navigator.pop(context);
+  Future<void> goBack(BuildContext context) async {
+    // Log engagement before navigating back.
+    await logEngagement('EmergencyView');
+    if (context.mounted) Navigator.pop(context);
   }
 
   Future<Position?> _getCurrentLocation() async {
