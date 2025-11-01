@@ -65,7 +65,7 @@ class _HomeViewState extends State<HomeView> {
           // went offline
           try {
             if (!mounted) return;
-            SnackWarning.show(context, 'Connection lost — some features may be limited');
+            SnackWarning.show(context, 'Connection lost, some features may be limited!');
           } catch (e) {
             debugPrint('[HomeView] Error showing offline snack: $e');
           }
@@ -73,7 +73,7 @@ class _HomeViewState extends State<HomeView> {
           // came back online
           try {
             if (!mounted) return;
-            SnackWarning.show(context, 'Connection recovered');
+            SnackWarning.show(context, 'Connection recovered!');
           } catch (e) {
             debugPrint('[HomeView] Error showing recovery snack: $e');
           }

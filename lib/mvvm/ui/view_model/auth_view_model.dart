@@ -272,6 +272,15 @@ class AuthViewModel extends ChangeNotifier {
       // Store total before signOut (which triggers _endSession)
       final totalTimeSpent = _totalSessionDuration;
 
+      // Clear any persisted auth tokens so the app does not fall back to
+      // an offline cached session after the user explicitly signs out.
+      try {
+        await _tokenCache.clear();
+        debugPrint('[AuthViewModel] Cleared auth token cache on sign out');
+      } catch (e) {
+        debugPrint('[AuthViewModel] Failed to clear token cache: $e');
+      }
+
       await _auth.signOut();
 
       await _analytics.logEvent(

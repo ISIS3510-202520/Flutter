@@ -37,15 +37,6 @@ class _AuthViewState extends State<AuthView> {
           );
         }
 
-        // User is not authenticated. If a valid cached token exists, show
-        // the HomeView in offline-fallback mode; otherwise show LoginView.
-        if (authViewModel.hasValidCachedToken) {
-          return ChangeNotifierProvider(
-            create: (_) => HomeViewModel(showOfflineFallbackOnStart: true),
-            child: const HomeView(),
-          );
-        }
-
         return ChangeNotifierProvider(
           create: (_) => LoginViewModel(),
           child: const LoginView(),
