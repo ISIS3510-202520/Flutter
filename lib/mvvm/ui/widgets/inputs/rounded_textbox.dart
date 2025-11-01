@@ -4,6 +4,7 @@ class RoundedTextbox extends StatelessWidget {
   final String hintText;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
+  final bool enabled;
   final bool obscureText;
 
   const RoundedTextbox({
@@ -11,6 +12,7 @@ class RoundedTextbox extends StatelessWidget {
     required this.hintText,
     this.controller,
     this.validator,
+    this.enabled = true,
     this.obscureText = false,
   });
 
@@ -20,6 +22,7 @@ class RoundedTextbox extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 64.0),
       child: TextFormField(
         controller: controller,
+        enabled: enabled,
         obscureText: obscureText,
         decoration: InputDecoration(
           hintText: hintText,
