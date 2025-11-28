@@ -24,19 +24,16 @@ class JournalListViewModel extends ChangeNotifier {
   Future<void> loadJournals(String userId) async {
     _isLoading = true;
     _errorMessage = null;
-    notifyListeners();
 
     try {
       _journals = await _repo.getJournals(userId);
 
-      // Sort journals by date (most recent first)
-      _journals.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     } catch (e) {
       _errorMessage = "Failed to load journals: $e";
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _isLoading = false; 
     }
+    notifyListeners();
   }
 
   /// Optional: helper to get a formatted date

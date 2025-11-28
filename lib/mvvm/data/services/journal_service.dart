@@ -6,12 +6,18 @@ class JournalService {
 
   /// Save a new journal entry to journals collection
   Future<void> saveJournal(Journal journal) async {
-    final docRef = await _firestore
-        .collection("journals")  
-        .add(journal.toMap());
+  final docRef = _firestore.collection("journals").doc();
 
-    await docRef.update({"id": docRef.id});
-  }
+  await docRef.set({
+    "id": docRef.id,
+    "userId": journal.userId,
+    "emotionId": journal.emotionId,
+    "description": journal.description,
+    "createdAt": journal.createdAt,
+    "sharedWithTherapist": journal.sharedWithTherapist,
+  });
+}
+
 
   /// Fetch all journal entries for a given user
   Future<List<Journal>> getJournals(String userId) async {
