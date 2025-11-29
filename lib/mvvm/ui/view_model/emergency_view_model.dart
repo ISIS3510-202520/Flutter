@@ -328,14 +328,14 @@ class EmergencyViewModel extends ChangeNotifier {
       // Process chunk 0 on main isolate
       final chunk0 = chunks[0];
       for (final c in chunk0) {
-        final ok = await _sendEmailSerialized({
-          'username': username,
-          'password': password,
-          'recipientEmail': c['email'],
-          'recipientName': c['name'],
-          'locationMessage': locationMessage,
-          'senderName': senderName,
-        });
+        final ok = await _sendEmailTyped(
+          username,
+          password,
+          c['email'] as String,
+          c['name'] as String,
+          locationMessage,
+          senderName,
+        );
         if (ok) successCount++;
       }
 
@@ -381,23 +381,16 @@ class EmergencyViewModel extends ChangeNotifier {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Top-level helpers for background email sending (Isolate-friendly)
-// ---------------------------------------------------------------------------
-
-/// Send a single email using serialized params. This is a top-level
-/// function so it can be invoked from spawned isolates. The params map
-/// must contain: username, password, recipientEmail, recipientName,
-/// locationMessage, senderName.
-Future<bool> _sendEmailSerialized(Map<String, dynamic> params) async {
+/// Typed variant that avoids allocating a Map per email (less GC churn).
+Future<bool> _sendEmailTyped(
+  String username,
+  String password,
+  String recipientEmail,
+  String recipientName,
+  String locationMessage,
+  String senderName,
+) async {
   try {
-    final username = params['username'] as String;
-    final password = params['password'] as String;
-    final recipientEmail = params['recipientEmail'] as String;
-    final recipientName = params['recipientName'] as String;
-    final locationMessage = params['locationMessage'] as String;
-    final senderName = params['senderName'] as String;
-
     final smtpServer = gmail(username, password);
 
     final message = Message()
@@ -430,7 +423,7 @@ Future<bool> _sendEmailSerialized(Map<String, dynamic> params) async {
     debugPrint('Email sent to $recipientEmail: ${sendReport.toString()}');
     return true;
   } catch (e) {
-    debugPrint('Error sending serialized email: $e');
+    debugPrint('Error sending typed email: $e');
     return false;
   }
 }
@@ -438,17 +431,22 @@ Future<bool> _sendEmailSerialized(Map<String, dynamic> params) async {
 /// Send a list of contacts sequentially. Returns number of successful sends.
 Future<int> _sendEmailsInIsolate(Map<String, dynamic> params) async {
   final contacts = (params['contacts'] as List<dynamic>).cast<Map<String, dynamic>>();
+  final String username = params['username'] as String;
+  final String password = params['password'] as String;
+  final String locationMessage = params['locationMessage'] as String;
+  final String senderName = params['senderName'] as String;
+
   int successCount = 0;
   for (final c in contacts) {
-    final singleParams = {
-      'username': params['username'],
-      'password': params['password'],
-      'recipientEmail': c['email'],
-      'recipientName': c['name'],
-      'locationMessage': params['locationMessage'],
-      'senderName': params['senderName'],
-    };
-    final ok = await _sendEmailSerialized(singleParams);
+    // avoid allocating a Map for each contact -> call typed helper
+    final ok = await _sendEmailTyped(
+      username,
+      password,
+      c['email'] as String,
+      c['name'] as String,
+      locationMessage,
+      senderName,
+    );
     if (ok) successCount++;
   }
   return successCount;
