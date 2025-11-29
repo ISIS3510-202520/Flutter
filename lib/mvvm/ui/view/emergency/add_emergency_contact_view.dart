@@ -52,16 +52,20 @@ class AddEmergencyContactView extends StatelessWidget {
 
                   const SizedBox(height: 20),
                   RoundedButton(
-                    text: "add",
+                    text: "Add Contact",
+                    color: const Color(0xFF8CC0CF),
                     icon: Icons.person_add,
                     // 👉 Toda la lógica se ejecuta en el VM
                     onPressed: () => vm.onAddPressed(context),
+                    width: 200,
                   ),
                   const SizedBox(height: 16),
                   RoundedButton(
                     text: "Back",
-                    // 👉 Navegación delegada al VM
                     onPressed: () => vm.onBackPressed(context),
+                    color: const Color(0xFF86D9F0),
+                    icon: Icons.arrow_back,
+                    width: 200,
                   ),
                 ],
               ),
