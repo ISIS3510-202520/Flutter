@@ -3,6 +3,8 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:here4u/models/emergency_contact.dart';
 import 'package:here4u/mvvm/data/repository/emergency_contact_repository.dart';
 import 'package:here4u/mvvm/data/services/emergency_contact_service.dart';
+import 'package:here4u/mvvm/ui/view/achievements/achievements_view.dart';
+import 'package:here4u/mvvm/ui/view_model/achievements_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:here4u/mvvm/ui/view/profile/profile_view.dart';
 import 'package:here4u/mvvm/ui/view_model/profile_view_model.dart';
@@ -42,10 +44,17 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   void onTapAchievements(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Achievements: soon!")),
-    );
-  }
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => ChangeNotifierProvider(
+        create: (_) => AchievementsViewModel(),
+        child: const AchievementsView(),
+      ),
+    ),
+  );
+}
+
 
   void onTapExercises(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(

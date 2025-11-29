@@ -219,12 +219,13 @@ class _HomeViewState extends State<HomeView> {
                                   SizedBox(
                                     width: buttonW,
                                     child: RoundedButton(
-                                      text: "Achievements",
-                                      onPressed: () => viewModel.onTapAchievements(context),
-                                      isBold: true,
-                                      color: const Color(0xFF7CC1C3),
-                                      textColor: Colors.black,
-                                    ),
+                                                    text: "Achievements",
+                                                    onPressed: () => viewModel.onTapAchievements(context),
+                                                    isBold: true,
+                                                    color: const Color(0xFF7CC1C3),
+                                                    textColor: Colors.black,
+                                                  ),
+                                                  
                                   ),
                                   const SizedBox(height: 14),
 
