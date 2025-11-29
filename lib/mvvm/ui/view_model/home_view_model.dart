@@ -4,6 +4,7 @@ import 'package:here4u/models/emergency_contact.dart';
 import 'package:here4u/mvvm/data/repository/emergency_contact_repository.dart';
 import 'package:here4u/mvvm/data/services/emergency_contact_service.dart';
 import 'package:here4u/mvvm/ui/view/achievements/achievements_view.dart';
+import 'package:here4u/mvvm/ui/view/exercises/exercise_view.dart';
 import 'package:here4u/mvvm/ui/view_model/achievements_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:here4u/mvvm/ui/view/profile/profile_view.dart';
@@ -57,10 +58,14 @@ class HomeViewModel extends ChangeNotifier {
 
 
   void onTapExercises(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Daily exercises: soon!")),
-    );
-  }
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const ExerciseView(),
+    ),
+  );
+}
+
 
   Future<void> onTapEmergency(
     BuildContext context, {
