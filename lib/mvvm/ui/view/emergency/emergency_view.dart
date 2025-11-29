@@ -18,30 +18,30 @@ class _EmergencyViewState extends State<EmergencyView> {
     super.initState();
     debugPrint("[EmergencyView] logging screen view");
     FirebaseAnalytics.instance.logScreenView(
-      screenName: 'HomeView',
-      screenClass: 'HomeView',
+      screenName: 'EmergencyView',
+      screenClass: 'EmergencyView',
     );
     // Start engagement timer in the ViewModel once the view is mounted.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        try {
-          context.read<EmergencyViewModel>().startEngagementTimer();
-        } catch (_) {
-          // Provider may not be available in some test scenarios; ignore.
-        }
+      if (!mounted) return;
+      try {
+        // Use read here to avoid subscribing the whole State to changes.
+        context.read<EmergencyViewModel>().startEngagementTimer();
+      } catch (_) {
+        // Provider may not be available in some test scenarios; ignore.
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-  final vm = context.watch<EmergencyViewModel>();
-  final network = context.watch<NetworkService>();
+    // Use `read` when we don't want the entire widget to rebuild on model changes.
+    final vm = context.read<EmergencyViewModel>();
 
     return WillPopScope(
       onWillPop: () async {
         // Log engagement when the system back is pressed.
-        await vm.logEngagement('EmergencyView');
+        await context.read<EmergencyViewModel>().logEngagement('EmergencyView');
         return true; // allow pop
       },
       child: Scaffold(
@@ -61,57 +61,78 @@ class _EmergencyViewState extends State<EmergencyView> {
                     ),
                     const SizedBox(height: 24),
 
-                    // Empty state
-                    if (vm.contacts.isEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 40),
-                        child: Text(
-                          "There are no contacts.",
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: Colors.grey[600],
-                              ),
-                        ),
-                      )
-                    else
-                      Wrap(
-                        spacing: 28,
-                        runSpacing: 20,
-                        alignment: WrapAlignment.center,
-                        children: vm.contacts.map((c) {
-                          return Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  customBorder: const CircleBorder(),
-                                  onTap: () => vm.onTapContact(context, c),
-                                  child: Ink(
-                                    width: 96,
-                                    height: 96,
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF86D9F0),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.person,
-                                      size: 44,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                c.name,
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                            ],
+                    // Contact area: show spinner while loading, then contacts.
+                    Selector<EmergencyViewModel, bool>(
+                      selector: (_, vm) => vm.isLoading,
+                      builder: (context, isLoading, _) {
+                        if (isLoading) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 40),
+                            child: Center(child: CircularProgressIndicator()),
                           );
-                        }).toList(),
-                      ),
+                        }
+
+                        // When not loading, render contacts (rebuild only when
+                        // contacts change).
+                        return Selector<EmergencyViewModel, List<dynamic>>(
+                          selector: (_, model) => model.contacts,
+                          builder: (context, contacts, _) {
+                            if (contacts.isEmpty) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 40),
+                                child: Text(
+                                  "There are no contacts.",
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(color: Colors.grey[600]),
+                                ),
+                              );
+                            }
+
+                            return Wrap(
+                              spacing: 28,
+                              runSpacing: 20,
+                              alignment: WrapAlignment.center,
+                              children: contacts.map((c) {
+                                return Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        customBorder: const CircleBorder(),
+                                        onTap: () => vm.onTapContact(context, c),
+                                        child: Ink(
+                                          width: 96,
+                                          height: 96,
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFF86D9F0),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(
+                                            Icons.person,
+                                            size: 44,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      c.name,
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context).textTheme.titleMedium,
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
+                            );
+                          },
+                        );
+                      },
+                    ),
 
                     const SizedBox(height: 28),
 
@@ -128,13 +149,18 @@ class _EmergencyViewState extends State<EmergencyView> {
                     const SizedBox(height: 16),
 
                     // Notify All button (mirrors Login/SignOut behavior)
-                    RoundedButton(
-                      text: network.isOnline ? 'Notify All' : 'Offline',
-                      color: network.isOnline ? const Color(0xFFFFDBD2) : Colors.grey,
-                      textColor: Colors.black,
-                      onPressed: network.isOnline ? () => vm.notifyAllContacts(context) : null,
-                      icon: Icons.notifications_active,
-                      width: 200,
+                    Selector<NetworkService, bool>(
+                      selector: (_, ns) => ns.isOnline,
+                      builder: (context, isOnline, _) {
+                        return RoundedButton(
+                          text: isOnline ? 'Notify All' : 'Offline',
+                          color: isOnline ? const Color(0xFFFFDBD2) : Colors.grey,
+                          textColor: Colors.black,
+                          onPressed: isOnline ? () => vm.notifyAllContacts(context) : null,
+                          icon: Icons.notifications_active,
+                          width: 200,
+                        );
+                      },
                     ),
 
                     const SizedBox(height: 32),
