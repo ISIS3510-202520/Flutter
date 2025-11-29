@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:here4u/mvvm/data/repository/emergency_contact_repository.dart';
+import 'package:here4u/mvvm/data/services/emergency_contact_service.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mailer/mailer.dart';
@@ -11,6 +13,8 @@ import 'package:here4u/core/services/network_service.dart';
 import 'package:here4u/models/emergency_contact.dart';
 import 'package:here4u/mvvm/ui/view/emergency/add_emergency_contact_view.dart';
 import 'package:here4u/mvvm/ui/view_model/add_emergency_contact_view_model.dart';
+import 'package:here4u/mvvm/ui/view/emergency/detail_emergency_view.dart';
+import 'package:here4u/mvvm/ui/view_model/detail_emergency_view_model.dart';
 import 'package:here4u/mvvm/ui/view_model/auth_view_model.dart';
 
 class EmergencyViewModel extends ChangeNotifier {
@@ -23,6 +27,9 @@ class EmergencyViewModel extends ChangeNotifier {
 
   /// Exposes contacts as an unmodifiable view so the UI can't mutate directly.
   List<EmergencyContact> get contacts => List.unmodifiable(_contacts);
+
+  final EmergencyContactRepository _repository =
+      EmergencyContactRepository(EmergencyContactService());
 
   /// Adds a new contact and notifies listeners so the UI re-builds.
   void addContact(EmergencyContact contact) {
@@ -58,18 +65,23 @@ class EmergencyViewModel extends ChangeNotifier {
     debugPrint('[EmergencyViewModel] Logged engagement: $engagementTime ms for $screenName');
   }
 
-  /// Handles a tap on a contact.
-  /// Current behavior: show a short SnackBar informing that calling
-  /// will be available soon.
-  /// - Keeps the exact copy: "Soon you will be able to call $name"
-  void onTapContact(BuildContext context, String name) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Soon you will be able to call $name'),
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 2),
+  /// When a contact is tapped navigate to the contact detail screen.
+  void onTapContact(BuildContext context, EmergencyContact contact) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ChangeNotifierProvider(
+          create: (_) => DetailEmergencyViewModel(contact: contact, emergencyViewModel: this),
+          child: const DetailEmergencyView(),
+        ),
       ),
     );
+  }
+
+  /// Remove a contact from the internal list and notify listeners.
+  void deleteContact(EmergencyContact contact) {
+    _contacts.removeWhere((c) => c.email == contact.email && c.name == contact.name && c.phone == contact.phone);
+    _repository.deleteContact(contact);
+    notifyListeners();
   }
 
   /// Starts the "Add Contact" flow by navigating to AddEmergencyContactView.

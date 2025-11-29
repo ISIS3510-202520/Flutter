@@ -86,7 +86,7 @@ class _EmergencyViewState extends State<EmergencyView> {
                                 color: Colors.transparent,
                                 child: InkWell(
                                   customBorder: const CircleBorder(),
-                                  onTap: () => vm.onTapContact(context, c.name),
+                                  onTap: () => vm.onTapContact(context, c),
                                   child: Ink(
                                     width: 96,
                                     height: 96,

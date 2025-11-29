@@ -15,5 +15,9 @@ class EmergencyContactRepository {
     return _service.getContacts(userId);
   }
 
+  Future<void> deleteContact(EmergencyContact contact) {
+    return _service.deleteContact(contact);
+  }
+
   
 }

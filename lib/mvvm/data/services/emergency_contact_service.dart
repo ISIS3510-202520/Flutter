@@ -129,6 +129,33 @@ class EmergencyContactService {
       return [];
     }
   }
+
+  /// Elimina un contacto de Firestore, Local DB y Cache.
+  Future<void> deleteContact(EmergencyContact contact) async {
+    try {
+      print("🗑️ Eliminando contacto ${contact.name}...");
+
+      // 🌐 Intentamos eliminar de Firebase
+      final query = await _firestore
+          .collection("EmergencyContact")
+          .where("id", isEqualTo: contact.id)
+          .get();
+
+      for (final doc in query.docs) {
+        await doc.reference.delete();
+      }
+
+      // 🔹 Eliminamos de local y cache
+      await _localDb.deleteContact(contact.id);
+      _cache.allContacts.removeWhere((c) => c.id == contact.id);
+
+      print("✅ Contacto eliminado correctamente de Firebase, local y caché.");
+    } on SocketException {
+      print("⚠️ Sin conexión. No se puede eliminar de Firebase ahora.");
+    } catch (e) {
+      print("❌ Error eliminando contacto: $e");
+    }
+  }
 }
 
 /// 🔧 Procesamiento en isolate (optimiza parsing JSON)
