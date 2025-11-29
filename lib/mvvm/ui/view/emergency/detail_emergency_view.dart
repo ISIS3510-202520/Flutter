@@ -12,51 +12,61 @@ class DetailEmergencyView extends StatelessWidget {
     final contact = vm.contact;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Emergency contact of ${contact.name}'),
-        backgroundColor: const Color(0xFF86D9F0),
-      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 480),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const SizedBox(height: 8),
-                    _labelAndValue('Name', contact.name),
-                    const SizedBox(height: 12),
-                    _labelAndValue('Email', contact.email),
-                    const SizedBox(height: 12),
-                    _labelAndValue('Phone', contact.phone),
-                    const SizedBox(height: 12),
-                    _labelAndValue('Relation', contact.relation),
-                    const SizedBox(height: 28),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 8),
+                  Text(
+                    'Emergency contact of ${contact.name}',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: 20),
+                  const Icon(Icons.person, size: 80, color: Colors.blue),
+                  const SizedBox(height: 20),
 
-                    RoundedButton(
-                      text: 'Delete Contact',
-                      color: Colors.redAccent,
-                      textColor: Colors.white,
-                      onPressed: () => vm.deleteContact(context),
-                      icon: Icons.delete_forever,
-                      width: double.infinity,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _labelAndValue('Name', contact.name),
+                        const SizedBox(height: 12),
+                        _labelAndValue('Email', contact.email),
+                        const SizedBox(height: 12),
+                        _labelAndValue('Phone', contact.phone),
+                        const SizedBox(height: 12),
+                        _labelAndValue('Relation', contact.relation),
+                        const SizedBox(height: 28),
+                      ],
                     ),
+                  ),
+                  const SizedBox(height: 20),
+                  RoundedButton(
+                    text: 'Delete Contact',
+                    color: const Color(0xFFFFDBD2),
+                    textColor: Colors.black,
+                    onPressed: () => vm.deleteContact(context),
+                    icon: Icons.delete_forever,
+                    width: 200,
+                  ),
 
-                    const SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
-                    RoundedButton(
-                      text: 'Back',
-                      color: const Color(0xFF86D9F0),
-                      textColor: Colors.black,
-                      onPressed: () => vm.goBack(context),
-                      icon: Icons.arrow_back,
-                      width: double.infinity,
-                    ),
-                  ],
-                ),
+                  RoundedButton(
+                    text: 'Back',
+                    color: const Color(0xFF86D9F0),
+                    textColor: Colors.black,
+                    onPressed: () => vm.goBack(context),
+                    icon: Icons.arrow_back,
+                    width: 200,
+                  ),
+                ],
               ),
             ),
           ),

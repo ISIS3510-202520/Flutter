@@ -121,7 +121,7 @@ class _EmergencyViewState extends State<EmergencyView> {
                       color: const Color(0xFF8CC0CF),
                       textColor: Colors.black,
                       onPressed: () => vm.startAddContactFlow(context),
-                      icon: Icons.add,
+                      icon: Icons.person_add,
                       width: 200,
                     ),
 
