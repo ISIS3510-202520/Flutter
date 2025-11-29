@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 import 'dart:isolate';
+import 'dart:collection';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:here4u/core/services/network_service.dart';
 
@@ -17,12 +18,38 @@ class EmergencyViewModel extends ChangeNotifier {
   final List<EmergencyContact> _contacts;
   DateTime? _startTime;
   bool _engagementLogged = false;
+  bool _isLoading = false;
 
-  EmergencyViewModel({required List<EmergencyContact> contacts})
-      : _contacts = contacts;
+  /// Construct with optional initial contacts. If omitted, view will load
+  /// contacts asynchronously after navigation.
+  EmergencyViewModel({List<EmergencyContact>? contacts}) : _contacts = contacts ?? <EmergencyContact>[] {
+    _isLoading = (contacts == null || contacts.isEmpty);
+  }
 
   /// Exposes contacts as an unmodifiable view so the UI can't mutate directly.
-  List<EmergencyContact> get contacts => List.unmodifiable(_contacts);
+  // Return an unmodifiable view to avoid allocating a new list on each call.
+  List<EmergencyContact> get contacts => UnmodifiableListView(_contacts);
+
+  /// Whether contacts are being loaded.
+  bool get isLoading => _isLoading;
+
+  /// Replace the current contacts efficiently (mutates existing list and
+  /// notifies listeners). Use this when loading contacts asynchronously.
+  void setContacts(List<EmergencyContact> contacts) {
+    _contacts
+      ..clear()
+      ..addAll(contacts);
+    // Loading is finished once we set contacts.
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  /// Mark loading state. Useful to set a spinner while fetching.
+  void setLoading(bool loading) {
+    if (_isLoading == loading) return;
+    _isLoading = loading;
+    notifyListeners();
+  }
 
   /// Adds a new contact and notifies listeners so the UI re-builds.
   void addContact(EmergencyContact contact) {

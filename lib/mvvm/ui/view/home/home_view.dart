@@ -150,18 +150,26 @@ class _HomeViewState extends State<HomeView> {
       },
     );
 
+    // Navigate immediately with an empty EmergencyViewModel so the UI
+    // appears right away; then ask the HomeViewModel to fetch contacts
+    // and populate the view model when ready. This reduces perceived wait.
+    final emergVm = EmergencyViewModel(contacts: []);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ChangeNotifierProvider<EmergencyViewModel>.value(
+          value: emergVm,
+          child: const EmergencyView(),
+        ),
+      ),
+    );
+
+    // Trigger underlying fetch; when contacts are ready, populate emergVm.
     viewModel.onTapEmergency(
       context,
       onNavigate: (contacts) {
         if (!mounted) return;
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => ChangeNotifierProvider(
-              create: (_) => EmergencyViewModel(contacts: contacts),
-              child: const EmergencyView(),
-            ),
-          ),
-        );
+        // Efficiently replace contacts without allocating new ViewModel.
+        emergVm.setContacts(contacts);
       },
     );
 
