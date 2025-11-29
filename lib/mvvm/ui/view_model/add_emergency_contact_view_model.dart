@@ -111,10 +111,43 @@ class AddEmergencyContactViewModel extends ChangeNotifier {
       return;
     }
 
-    // 4) Sobrescribir controllers con los valores recortados
+    // 4) Additional validations: lengths and phone format
+    if (name.length > 30) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Name must be at most 30 characters'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    if (relation.length > 20) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Relationship must be at most 20 characters'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    // Normalize phone to digits-only and require exactly 10 digits
+    final digitsOnly = phone.replaceAll(RegExp(r'\D'), '');
+    if (digitsOnly.length != 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Phone number must contain 10 digits'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    // 5) Sobrescribir controllers con los valores recortados/normalizados
     nameController.text = name;
     relationController.text = relation;
-    phoneController.text = phone;
+    phoneController.text = digitsOnly;
     emailController.text = email;
 
     // 5) Crear y guardar contacto

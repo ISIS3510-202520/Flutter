@@ -22,7 +22,7 @@ class DetailEmergencyView extends StatelessWidget {
                 children: [
                   const SizedBox(height: 8),
                   Text(
-                    'Emergency contact of ${contact.name}',
+                    'Emergency contact of ${contact.name.split(' ').first}',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
@@ -31,7 +31,7 @@ class DetailEmergencyView extends StatelessWidget {
                   const SizedBox(height: 20),
 
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 64),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
