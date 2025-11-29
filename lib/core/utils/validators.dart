@@ -1,7 +1,10 @@
 String? emailValidator(String? value) {
   if (value == null || value.isEmpty) return 'Email is required';
-  final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-  if (!emailRegex.hasMatch(value)) return 'Enter a valid email';
+  final regex = RegExp(
+      r'^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$',
+      caseSensitive: false,
+    );
+  if (!regex.hasMatch(value)) return 'Enter a valid email';
   return null;
 }
 
@@ -19,5 +22,6 @@ String? nameValidator(String? value) {
   if (value == null || value.isEmpty) return 'Name is required';
   if (value.length < 2) return 'Name must be at least 2 characters';
   if (!RegExp(r'^[a-zA-Z ]+$').hasMatch(value)) return 'Name can only contain letters and spaces';
+  if (value.length > 30) return 'Name must be at most 30 characters';
   return null;
 }

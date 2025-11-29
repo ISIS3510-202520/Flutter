@@ -42,6 +42,20 @@ class RegisterViewModel extends ChangeNotifier {
     if (isOnline != wasOnline) notifyListeners();
   }
 
+  bool _isValidEmail(String email) {
+    final regex = RegExp(
+      r'^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$',
+      caseSensitive: false,
+    );
+    // Fall back to a simpler pattern if the above is mis-parsed by any toolchain
+    try {
+      return regex.hasMatch(email);
+    } catch (_) {
+      final fallback = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+      return fallback.hasMatch(email);
+    }
+  }
+
   @override
   void dispose() {
     _connectivitySub?.cancel();
@@ -61,6 +75,25 @@ class RegisterViewModel extends ChangeNotifier {
     String name, 
     BuildContext context
   ) async {
+    // Basic validation: name and email before attempting network/connectivity work
+    final trimmedName = name.trim();
+    final trimmedEmail = email.trim();
+
+    if (trimmedName.isEmpty) {
+      SnackWarning.show(context, 'Please enter your name.');
+      return;
+    }
+
+    if (trimmedName.length > 30) {
+      SnackWarning.show(context, 'Name must be at most 30 characters.');
+      return;
+    }
+
+    if (!_isValidEmail(trimmedEmail)) {
+      SnackWarning.show(context, 'Please enter a valid email address.');
+      return;
+    }
+
     // Set the AuthViewModel reference
     _authViewModel = context.read<AuthViewModel>();
 
