@@ -160,6 +160,7 @@ class AddEmergencyContactViewModel extends ChangeNotifier {
 
     // 7) Cerrar pantalla
     Navigator.pop(context);
+    Navigator.pop(context);
 
     // 8) Confirmación
     ScaffoldMessenger.of(context).showSnackBar(
